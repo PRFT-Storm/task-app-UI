@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html ng-app="APP">
+<head>
+    <title>Test Angular App</title>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-animate.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular-aria.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" media="screen,projection">
+    
+    <script src="app.js"></script>
+    <link href="app.css" type="text/css" rel="stylesheet" />
+</head>
+<body ng-controller="theController">
+    <div class="mat-box" id="state-0" ng-show="states[0]">
+        <form>
+            <h1>Task Timer App</h1>
+            <p>testing angular with animate &amp; async data integration</p>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="task_title" type="text" class="validate" ng-model="taskTitle"/>
+                    <label for="task_title">Task Title</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input class="datepicker" id="task_date">
+                    <label for="task_date">Task date selection</label>
+                </div>
+            </div>                        
+            <button type="button" ng-click="start()" class="button buttonBlue buttonFull">
+                Start
+                <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+            </button>
+        </form>
+    </div>
+
+    <div class="mat-box" id="state-1" ng-show="states[1]">
+        <form>
+            <h1>Task Timer Running</h1>
+            <p>{{taskTitle}}</p>
+            <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
+            <div class="row valign-wrapper">
+                <div class="input-field col s10">
+                    <!--<i class="material-icons prefix medium">mode_edit</i>-->
+                    <textarea id="task_comment" class="materialize-textarea" ng-model="comment"></textarea>
+                    <label for="task_comment">Comment</label>
+                </div>
+                <div class="col s2 valign">
+                    <a href="#" ng-click="commentAdd()"><i class="material-icons small click">done</i></a>
+                </div>
+            </div>
+            <ul id="comment-box">
+                <li class="row valign-wrapper" ng-repeat="comment in comments" watch-scope="comment">
+                    <div class="col s1">
+                        <a href="#" ng-click="comments.splice($index,1)"><i class="material-icons small">delete</i></a>
+                    </div>
+                    <div class="col s4">
+                        <b>{{ comment.time }}</b>
+                        <br/>
+                        <span>{{comment.current | date:'hh:mm a'}}</span>
+                    </div>
+                    <div class="col s7 valign">
+                        {{ comment.description }}
+                    </div>
+                </li>
+            </ul>
+            <button type="button" class="button buttonBlue buttonHalf" ng-click="taskBreak()">
+                Break
+                <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+            </button>
+            <button type="button" class="button buttonRed buttonHalf" ng-click="taskDone()">
+                Done
+                <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+            </button>
+        </form>
+    </div>
+
+    <div class="mat-box" id="state-2" ng-show="states[2]">
+        <form>
+            <h1>Task Timer Paused</h1>
+            <p>{{taskTitle}}</p>
+            <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
+            <ul id="comment-box">
+                <li class="row valign-wrapper" ng-repeat="comment in comments" watch-scope="comment">
+                    <div class="col s1">
+                        <a href="#" ng-click="comments.splice($index,1)"><i class="material-icons small">delete</i></a>
+                    </div>
+                    <div class="col s4">
+                        <b>{{ comment.time }}</b>
+                        <br />
+                        <span>{{comment.current | date:'hh:mm a'}}</span>
+                    </div>
+                    <div class="col s7 valign">
+                        {{ comment.description }}
+                    </div>
+                </li>
+            </ul>
+            <div class="buttonGroup">
+                <button type="button" class="button buttonBlue buttonHalf" ng-click="start()">
+                    Resume
+                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                </button>
+                <button type="button" class="button buttonRed buttonHalf" ng-click="taskDone()">
+                    Done
+                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mat-box" id="state-3" ng-show="states[3]">
+        <form>
+            <h1>Task Completed</h1>
+            <p>{{taskTitle}}</p>
+            <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
+
+            <div class="buttonGroup">
+                <button type="button" class="button buttonBlue buttonHalf" ng-click="start()">
+                    Start new task
+                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                </button>
+                
+            </div>
+        </form>
+    </div>
+</body>
+</html>
