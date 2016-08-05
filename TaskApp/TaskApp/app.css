@@ -14,8 +14,15 @@ h1 { color: #636363; }
 
 h3 { color: #4a89dc; }
 
+.smaller-text {
+    font-size:1rem;
+}
+
+.subheader {
+    font-size:1.4rem;
+}
+
 form {
-	width: 440px;
 	margin: 4em auto;
 	padding: 3em 2em 2em 2em;
 	background: #fafafa;
@@ -23,98 +30,46 @@ form {
 	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
 
-/*.group { 
-	position: relative; 
-	margin-bottom: 45px; 
+/*.comment-animate {
+    transition: all linear 0.5s;
+    opacity:1;
+}
+.comment-animate.ng-enter {
+    opacity:1;
+}*/
+
+
+.comment-animate.ng-enter, .comment-animate.ng-move {
+  transition: all 0.5s linear;
+  opacity: 0;
 }
 
-input {
-	font-size: 18px;
-	padding: 10px 10px 10px 5px;
-	-webkit-appearance: none;
-	display: block;
-	background: #fafafa;
-	color: #636363;
-	width: 100%;
-	border: none;
-	border-radius: 0;
-	border-bottom: 1px solid #757575;
+/*
+ The ng-enter-active and ng-move-active
+ are where the transition destination properties
+ are set so that the animation knows what to
+ animate.
+*/
+.comment-animate.ng-enter.ng-enter-active,
+.comment-animate.ng-move.ng-move-active {
+  opacity: 1;
 }
 
-input:focus { outline: none; }
-
-
-/* Label 
-label {
-	color: #999; 
-	font-size: 18px;
-	font-weight: normal;
-	position: absolute;
-	pointer-events: none;
-	left: 5px;
-	top: 10px;
-	transition: all 0.2s ease;
+/*
+  We're using CSS keyframe animations for when
+  the leave event is triggered for the element
+  that has the .repeated-item class
+*/
+.comment-animate.ng-leave {
+  animation: 0.5s comment_animate;
 }
 
-
-/* active 
-input:focus ~ label, input.used ~ label {
-	top: -20px;
-  transform: scale(.75); left: -2px;
-	/* font-size: 14px; 
-	color: #4a89dc;
+@keyframes comment_animate {
+  from { opacity:1; }
+  to { opacity:0; }
 }
 
 
-/* Underline 
-.bar {
-	position: relative;
-	display: block;
-	width: 100%;
-}
-
-.bar:before, .bar:after {
-	content: '';
-	height: 2px; 
-	width: 0;
-	bottom: 1px; 
-	position: absolute;
-	background: #4a89dc; 
-	transition: all 0.2s ease;
-}
-
-.bar:before { left: 50%; }
-
-.bar:after { right: 50%; }
-
-
-/* active 
-input:focus ~ .bar:before, input:focus ~ .bar:after { width: 50%; }
-
-
-/* Highlight 
-.highlight {
-	position: absolute;
-	height: 60%; 
-	width: 100px; 
-	top: 25%; 
-	left: 0;
-	pointer-events: none;
-	opacity: 0.5;
-}
-
-
-/* active 
-input:focus ~ .highlight {
-	animation: inputHighlighter 0.3s ease;
-}
-
-
-/* Animations 
-@keyframes inputHighlighter {
-	from { background: #4a89dc; }
-	to 	{ width: 0; background: transparent; }
-}
 
 /* Button */
 .button {

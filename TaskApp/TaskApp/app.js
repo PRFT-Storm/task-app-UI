@@ -8,10 +8,18 @@ myApp.controller('theController', ['$scope','$filter','$timeout', function ($sco
     $scope.time = [0, 0, 0]; //hr, min, sec
     $scope.date = new Date();
 
-    $scope.taskTitle = "";
+    $scope.task = {
+        title: "",
+        start: "",
+        comments: [{
+            time: "start",
+            current: $scope.date,
+            description: "",
+        }]
+    }
     $scope.comment = "";
     
-    $scope.comments = [
+    $scope.task.comments = [
         {
             time: "start",
             current: $scope.date,
@@ -29,8 +37,9 @@ myApp.controller('theController', ['$scope','$filter','$timeout', function ($sco
                 current: cmtDate,
                 description : $scope.comment,
             };
-        $scope.comments.unshift(tempCmt);
+        $scope.task.comments.unshift(tempCmt);
         $scope.comment = "";
+
     }
 
     $scope.taskTimer = function () {
@@ -69,11 +78,13 @@ myApp.controller('theController', ['$scope','$filter','$timeout', function ($sco
         $scope.state = 2;
         stateManager($scope.state);
         var brkTime = $scope.time[0] + " hr " + $scope.time[1] + " min";
+        var brkDate = new Date();
         var brkCmt = {
             time: brkTime,
+            current: brkDate,
             description: "took a break :)",
         };
-        $scope.comments.unshift(brkCmt);
+        $scope.task.comments.unshift(brkCmt);
 
         $scope.running = false;
         $timeout.cancel(testStart);
@@ -86,19 +97,24 @@ myApp.controller('theController', ['$scope','$filter','$timeout', function ($sco
 
         $scope.running = false;
         $timeout.cancel(testStart);
+        $scope.task.start = $scope.task.comments[0].current;
     }
 
-}]).directive('watchScope', [function () {
-    return {
-        scope: {
-            comment: '=watchScope'
-        },
-        link: function (scope, element, attrs) {
-            console.log('comment: ' + scope.comment.description);
-        }
-    };
 }]);
 
+//myApp.directive('watchScope', [function () {
+//    return {
+//        scope: {
+//            comment: '=watchScope'
+//        },
+//        link: function (scope, element, attrs) {
+//            //scope is similar to scope we use in controller
+//            //element on which the directive is applied
+//            //attrs contains additional info like class, etc.
+//            console.log('comment: ' + scope.comment.description);
+//        }
+//    };
+//}]);
 
 $(window, document, undefined).ready(function () {
     $('.datepicker').pickadate({
