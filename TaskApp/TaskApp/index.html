@@ -17,30 +17,40 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" media="screen,projection">
     
+    <script src="https://api.trello.com/1/client.js?key=ae7f3c6b7823b3434c09c2ba005eafc9"></script>
+
     <script src="app.js"></script>
     <link href="app.css" type="text/css" rel="stylesheet" />
 </head>
-<body ng-controller="theController">
+<body ng-controller="theController" onload="fix_selects()">
 
     <div class="row">
-        <div class="col s12 m3">
-            <!--will hold the side navigation that manages different task selection (future version)-->
-            <ul id="slide-out" class="side-nav fixed">
-                <li>
-                    <div class="userView">
-                        <img class="background" src="images/office.jpg">
-                        <a href="#!user"><img class="circle" src="images/yuna.jpg"></a>
-                        <a href="#!name"><span class="white-text name">John Doe</span></a>
-                        <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
-                    </div>
-                </li>
-                <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-                <li><a href="#!">Second Link</a></li>
-                <li><div class="divider"></div></li>
-                <li><a class="subheader">Subheader</a></li>
-                <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
-            </ul>
-            <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+        <div class="col s12 m3 left-nav">
+            
+            <div class="header-section">
+                <h2>WhyTask</h2>
+                <h4>Made By: Storm Anderson</h4>               
+                <a href="#!email"><span class="email">stormea36@gmail.com</span></a>
+                <ul>
+                    <li><a href="#!">Board: {{boardSelect}}</a></li>
+                    <li><div class="divider"></div></li>
+                    <li><a href="#!">list: {{listSelect}}</a></li>
+                </ul>
+            </div>    
+            
+            <div class="input-field col s12">
+                <select id="board-select" ng-model="boardSelect" ng-change="boardChange()">
+                    <option selected></option>
+                </select>
+                <label>Select a Board</label>
+            </div>
+            <div class="input-field col s12">
+                <select id="list-select" ng-model="listSelect" 
+                        ng-change="listChange()">
+                <option selected></option>
+                </select>
+                <label>Select a List</label>
+            </div>
 
         </div> <!--sidebar-->
 
@@ -51,30 +61,43 @@
 
                     <div class="mat-box" id="state-0" ng-show="states[0]">
                         <form>
-                            <h3>Task Timer App</h3>
+                            <h3>Task Timer App</h3>  
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <select>
+                                        <option value="" selected>Choose your option</option>
+                                        <option value="1">Option 1</option>
+                                        <option value="2">Option 2</option>
+                                        <option value="3">Option 3</option>
+                                    </select>
+                                    <label>Materialize Select</label>
+                                </div>
+                            </div>
                             <p class="subheader">testing angular with animate &amp; async data integration</p>
-                            <div class="row">
-                                <div class="input-field col s12">
-                                    <input id="task_title" type="text" class="validate" ng-model="task.title" />
-                                    <label for="task_title">Task Title</label>
+
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input id="task_title" type="text" class="validate" ng-model="task.title" />
+                                        <label for="task_title">Task Title</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="input-field col s12">
-                                    <input class="datepicker" id="task_date">
-                                    <label for="task_date">Task date selection</label>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <textarea id="task_desc" class="materialize-textarea" ng-model="task.description"></textarea>
+                                        <label for="task_desc">Addition Details:</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <button type="button" ng-click="start()" class="button buttonBlue buttonFull">
-                                Start
-                                <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                            </button>
-                        </form>
+                                <button type="button" ng-click="start()" class="button buttonBlue buttonFull">
+                                    Start
+                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                                </button>
+</form>
                     </div>
 
                     <div class="mat-box" id="state-1" ng-show="states[1]">
                         <form>
                             <h3>Task Timer Running</h3>
+
                             <p>{{task.title}}</p>
                             <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
                             <div class="row valign-wrapper">

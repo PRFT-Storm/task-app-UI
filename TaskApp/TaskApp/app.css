@@ -18,6 +18,18 @@ h3 { color: #4a89dc; }
     font-size:1rem;
 }
 
+.left-nav {
+    background-color:white;
+    border-right:1px solid rgba(0,0,0,0.09804);
+    min-height:300px;
+}
+
+.header-section {
+    width:80%;
+    margin:0 auto;
+    text-align:center;
+}
+
 .subheader {
     font-size:1.4rem;
 }
@@ -29,6 +41,10 @@ form {
 	border: 1px solid #ebebeb;
 	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
+
+/*#board-select, #list-select {
+    display:block;
+}*/
 
 /*.comment-animate {
     transition: all linear 0.5s;
