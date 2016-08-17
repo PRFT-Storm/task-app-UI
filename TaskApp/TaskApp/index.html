@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html ng-app="APP">
+<html ng-app="app">
 <head>
     <title>Test Angular App</title>
     <meta charset="utf-8" />
@@ -18,14 +18,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" media="screen,projection">
     
     <script src="https://api.trello.com/1/client.js?key=ae7f3c6b7823b3434c09c2ba005eafc9"></script>
-
-    <script src="app.js"></script>
+    
     <link href="app.css" type="text/css" rel="stylesheet" />
 </head>
-<body ng-controller="theController" onload="fix_selects()">
+<body onload="fix_selects()">
 
     <div class="row">
-        <div class="col s12 m3 left-nav">
+        <div id="left-nav" class="col s12 m4" ng-controller="TrelloController">
             
             <div class="header-section">
                 <h2>WhyTask</h2>
@@ -37,24 +36,55 @@
                     <li><a href="#!">list: {{listSelect}}</a></li>
                 </ul>
             </div>    
-            
-            <div class="input-field col s12">
-                <select id="board-select" ng-model="boardSelect" ng-change="boardChange()">
-                    <option selected></option>
-                </select>
-                <label>Select a Board</label>
-            </div>
-            <div class="input-field col s12">
-                <select id="list-select" ng-model="listSelect" 
-                        ng-change="listChange()">
-                <option selected></option>
-                </select>
-                <label>Select a List</label>
+            <div class="trello-section">
+                <div class="input-field col s12">
+                    <select id="board-select" ng-model="boardSelect" ng-change="boardChange()">
+                        <option selected></option>
+                    </select>
+                    <label>Select a Board</label>
+                </div>
+                <div class="input-field col s12">
+                    <select id="list-select" ng-model="listSelect"
+                            ng-change="listChange()">
+                        <option selected></option>
+                    </select>
+                    <label ng-show="boardSelect">Select a List</label>
+                </div>
+                <hr/>
+                <h5>Edit a card<small> <a href="#"> New Task</a></small></h5>
+                
+                <div class="card-box">
+                    <div class="card" ng-repeat="card in cardsArr">
+                        <div class="c-content">
+                            <span class="c-title truncate" title="{{ card.name }}">{{ card.name }}</span>
+                            <p>
+                                {{ card.desc }}
+                            </p>
+                        </div>
+                        <div class="card-action teal lighten-5">
+                            <a href="#" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Edit </a>
+                            <a href="#" class="teal-text darken-4-text">This is a link</a>
+                        </div>
+                    </div>
+                </div>
+                <!--<ul>
+                    <li ng-repeat="card in cardsArr">
+                        <div class="row">
+                            <div class="col s10">
+                                <p class="card-title">{{ card.name }}</p>
+                                <p class="card-desc">{{ card.desc }} <span> <i class="tiny material-icons">comment</i></span></p>
+                                
+                            </div>
+                            <div class="col s2"><span>{{ card.cmtCount }} <i class="small material-icons">mode_edit</i></span></div>
+                        </div>
+                        <p> - <br/></p>
+                    </li>
+                </ul>-->
             </div>
 
         </div> <!--sidebar-->
 
-        <div class="col s12 m9">
+        <div class="col s12 m8" ng-controller="TaskController">
 
             <div class="row">
                 <div class="col s12 m6 offset-m3">
@@ -62,17 +92,6 @@
                     <div class="mat-box" id="state-0" ng-show="states[0]">
                         <form>
                             <h3>Task Timer App</h3>  
-                            <div class="row">
-                                <div class="input-field col s12">
-                                    <select>
-                                        <option value="" selected>Choose your option</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                        <option value="3">Option 3</option>
-                                    </select>
-                                    <label>Materialize Select</label>
-                                </div>
-                            </div>
                             <p class="subheader">testing angular with animate &amp; async data integration</p>
 
                                 <div class="row">
@@ -192,5 +211,7 @@
         </div>
     </div>
 
+    <script src="app.js"></script>
+    
 </body>
 </html>

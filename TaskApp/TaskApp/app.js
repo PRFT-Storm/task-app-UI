@@ -1,6 +1,9 @@
-﻿myApp = angular.module("APP", ["ngAnimate"]);
+﻿'use strict';
+var taskApp = angular.module("taskApp", ["ngAnimate"]);
 
-myApp.controller("theController", ["$scope", "$filter", "$timeout", function ($scope, $filter, $timeout) {
+taskApp.controller("theController",
+    ["$scope", "$filter", "$timeout","$routeParams",
+        function ($scope, $filter, $timeout) {
 
     $scope.running = false;
     $scope.state = 0;
@@ -25,66 +28,20 @@ myApp.controller("theController", ["$scope", "$filter", "$timeout", function ($s
     $scope.comment = "";
 
     $scope.commentAdd = function () {
-        var tempTime = $scope.time[0] + " hr " + $scope.time[1] + " min";
-        var cmtDate = new Date();
-        console.log(cmtDate);
-
-        var tempCmt = {
-            time: tempTime,
-            current: cmtDate,
-            description: $scope.comment
-        };
-        $scope.task.comments.unshift(tempCmt);
-        $scope.comment = "";
-
     };
 
     $scope.taskTimer = function () {
-        if ($scope.running === true) {
-            $scope.time[2]++;
-            if ($scope.time[2] % 60 === 0) {
-                $scope.time[1]++;
-                $scope.time[2] = 0;
-                if ($scope.time[1] % 60 === 0) {
-                    $scope.time[0]++;
-                    $scope.time[1] = 0;
-                }
-            }
-            taskTimer = $timeout($scope.taskTimer, 1000);
-        }
     };
 
     var stateManager = function (state) {
-        angular.forEach($scope.states, function (key, value) {
-            state === value ? $scope.states[value] = true : $scope.states[value] = false;
-        });
     };
 
     var testStart = $timeout($scope.taskTimer, 1000);
 
     $scope.start = function () {
-        console.log("start");
-        $scope.state = 1;
-        stateManager($scope.state);
-
-        $scope.running = true;
-        testStart = $timeout($scope.taskTimer, 1000);
     }
 
     $scope.taskBreak = function () {
-        $scope.state = 2;
-        stateManager($scope.state);
-        var brkTime = $scope.time[0] + " hr " + $scope.time[1] + " min";
-        var brkDate = new Date();
-        var brkCmt = {
-            time: brkTime,
-            current: brkDate,
-            description: "took a break :)",
-        };
-        $scope.task.comments.unshift(brkCmt);
-
-        $scope.running = false;
-        $timeout.cancel(testStart);
     }
 
     $scope.taskDone = function () {
@@ -106,6 +63,8 @@ myApp.controller("theController", ["$scope", "$filter", "$timeout", function ($s
         Trello.post("/cards/", newCard, $scope.creationSuccess);
     }
 
+    /////////////////////// everything below is associated with pulling trello data
+
     $scope.creationSuccess = function (data) {
         console.log("Card created successfully. Data returned");
         var cardId = data.id;
@@ -119,93 +78,9 @@ myApp.controller("theController", ["$scope", "$filter", "$timeout", function ($s
         Trello.post(trelloUrl, { text: trelloCmt }, function () { console.log("successful cmt") });
     }
 
-    $scope.init = function () {
-        console.log("scope init");
-
-        Trello.get("/member/me/boards", $scope.setBoards, error);
-
-    };
-
     $scope.selected = "";
-    $scope.boardSelect = "";
-    $scope.listSelect = "";
-
-    $scope.boardChange = function () {
-        var listClear = document.getElementById("list-select");
-        var i;
-        for (i = listClear.options.length - 1 ; i >= 0 ; i--) {
-            listClear.remove(i);
-        }
-        if ($scope.boardSelect !== "") {
-            var trelloCmt = "";
-            var trelloListUrl = "/boards/" + $scope.boardSelect + "/lists";
-            Trello.get(trelloListUrl, $scope.setLists, error);
-        } else {
-            console.log("didnt have a board ID set");
-        }
-    }
-
-    $scope.setLists = function (listData) {
-        listData.forEach(function (data) {
-            $("#list-select").append($("<option>").text(data.name).attr("value", data.id));
-        });
-        $("#list-select").material_select();
-    }
-
-    $scope.setBoards = function (successMsg) {
-        successMsg.forEach(function (data) {
-            $("#board-select").append($("<option>").text(data.name).attr("value", data.id));
-        });
-        $("#board-select").material_select();
-    }
-
+    
 }]);
-
-var init = function () {
-    console.log("normal init");
-    // check if there is query in url
-    // and fire search in case its value is not empty
-};
-
-var success = function (successMsg) {
-    console.log("success called");
-    successMsg.forEach(function (data) {
-        console.log("name: " + data.name + " id: " + data.id);
-        $("#board-select").append($("<option>").text(data.name).attr("value", data.id));
-        var board = {
-            "value": data.id, "text": data.name
-        }
-        //$scope.boards.push(board);
-        //console.log("length: " + $scope.boards.length);
-    });
-    $("#board-select").material_select();
-};
-
-var error = function (errorMsg) {
-    console.log("error Msg");
-};
-
-
-var myList = "57a417a2f82c0f49e3bfcc86";
-
-//var creationSuccess = function (data) {
-//    console.log("Card created successfully. Data returned");
-//    var cardId = data.id;
-//    Trello.post("/cards/", newCard, creationSuccess);
-
-//};
-
-var authenticationSuccess = function () {
-    init();
-};
-var authenticationFailure = function () { console.log("Failed authentication"); };
-
-function fix_selects() {
-    document.getElementById("board-select").selectedIndex = 0;
-    //Or
-    // document.getElementById("MySelect").value = "#";
-
-}
 
 $(window, document, undefined).ready(function () {
     var $listSelect = $("#list-select");
@@ -213,21 +88,8 @@ $(window, document, undefined).ready(function () {
     $listSelect.on("contentChanged", function () {
         $(this).material_select();
     })
-    Trello.authorize(
-        {
-            type: "popup",
-            name: "Task Tracker App",
-            scope: {
-                read: true,
-                write: true
-            },
-            expiration: "never",
-            success: authenticationSuccess,
-            error: authenticationFailure,
-        }
-    );
 
-    Trello.get("/member/me/boards", success, error);
+    //Trello.get("/member/me/boards", success, error);
 
     $(".datepicker").pickadate({
         selectMonths: true, // Creates a dropdown to control month

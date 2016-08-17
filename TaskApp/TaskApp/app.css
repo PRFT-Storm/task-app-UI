@@ -18,16 +18,35 @@ h3 { color: #4a89dc; }
     font-size:1rem;
 }
 
-.left-nav {
+#left-nav {
     background-color:white;
     border-right:1px solid rgba(0,0,0,0.09804);
     min-height:300px;
+    padding:0;
 }
 
 .header-section {
     width:80%;
     margin:0 auto;
     text-align:center;
+}
+.trello-section {
+    min-height:400px;   
+}
+
+.card-list {
+    height:300px;
+    overflow-y:scroll;
+}
+
+.c-content {
+    padding:10px;
+}
+.card .card-action {
+    padding:10px;
+}
+.c-title {
+    font-size:19px;
 }
 
 .subheader {
