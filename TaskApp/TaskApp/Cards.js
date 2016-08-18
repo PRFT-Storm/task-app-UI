@@ -5,12 +5,13 @@ angular.module("taskApp").factory("Card", function () {
    * Constructor, with class name
    */
 
-    function Card(id, name, desc, cmtCount) {
+    function Card(id, name, desc, cmtCount, listId) {
         // Public properties, assigned to the instance ('this')
         this.id = id;
         this.name = name;
         this.desc = desc;
-        this.cmtCount = cmtCount;        
+        this.cmtCount = cmtCount;
+        this.listId = listId;
     }
 
     /**

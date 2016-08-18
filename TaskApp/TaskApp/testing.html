@@ -62,7 +62,7 @@
                                     </p>
                                 </div>
                                 <div class="card-action teal lighten-5">
-                                    <a href="#" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Edit </a>
+                                    <a href="#" ng-click="taskAction('set',card)" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Edit </a>
                                     <a href="#" class="teal-text darken-4-text">This is a link</a>
                                 </div>
                             </li>
@@ -86,7 +86,7 @@
             </div>            
         </div>
         <div class="row">
-            <div class="col s6">
+            <div class="col s12 m6">
                 <h4>Create a task</h4>
                 <input id="task_title" type="text" ng-model="task.title" />
                 <textarea id="task_desc" class="materialize-textarea" ng-model="task.desc"></textarea>
@@ -130,12 +130,16 @@
                 </ul>
                 
                 <div class="buttonGroup">
-                    <button type="button" class="button buttonBlue buttonHalf" ng-click="taskBreak('break')">
+                    <button type="button" class="button buttonBlue buttonHalf" ng-click="taskAction('break')">
                         Break
                         <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
                     </button>
-                    <button type="button" class="button buttonRed buttonHalf" ng-click="taskBreak('resume')">
+                    <button type="button" class="button buttonRed buttonHalf" ng-click="taskAction('resume')">
                         resume
+                        <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                    </button>
+                    <button type="button" class="button buttonRed buttonHalf" ng-click="taskAction('done')">
+                        Done
                         <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
                     </button>
                 </div>

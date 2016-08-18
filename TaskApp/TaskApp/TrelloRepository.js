@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-angular.module("taskApp").factory("Trello", function (Board, Card, List, Task, $q, $rootScope, $filter) {
+angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Task, $q, $rootScope, $filter) {
 
     return new function () {
 
@@ -65,6 +65,7 @@ angular.module("taskApp").factory("Trello", function (Board, Card, List, Task, $
                  $filter("date")(new Date(), "MM/dd/yy hh:mm a"),
                  listId
                  );
+             newTask.createTask();
              return newTask;
          }
          

@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-angular.module("taskApp").factory("Task", function ($interval) {
+angular.module("taskApp").factory("Task", function ($interval, $filter) {
     /**
    * Constructor, with class name
    */
@@ -17,34 +17,37 @@ angular.module("taskApp").factory("Task", function ($interval) {
         this.endTime = null;
     }
 
-    /**
-     * Private property
-     */
-    var states = ['new', 'running', 'paused', 'done'];
-
-    /**
-     * Private function
-     */
-    function checkState(state) {
-        return possibleRoles.indexOf(state) !== -1;
-    }
-
     Task.prototype.createTask = function () {
         /* call the trello API in here */
         var self = this;
-        var cardArr = [];
-        var trelloListUrl = "/cards/" + self.listId + "/cards";
-        return Trello.get(trelloListUrl).then(function (response) {
-            response.forEach(function (card) {
-                var newCard = new Card(card.id, card.name, card.desc, card.badges.comments);
-                cardArr.push(newCard);
-            });
-            return cardArr;
+        var newCard = {
+            name: self.title,
+            desc: self.desc,
+            // Place this card at the top of our list
+            idList: self.listId,
+            pos: "top"
+        };
+        return Trello.post("/cards/", newCard).then(function (data) {
+            var cardId = data.id;
+            console.log("task created!: "+cardId);
+            self.id = cardId;
+            return cardId;
         });
     };
 
-    Task.prototype.getComments = function (id) {
+    Task.prototype.postComments = function () {
         /* call the trello API in here */
+        console.log("Card created successfully. Data returned");
+        var self = this;
+        var trelloCmt = "";
+        var trelloUrl = "/cards/" + self.id + "/actions/comments";
+        trelloCmt += "**date worked:** " + $filter("date")(new Date(), "MM/dd/yyyy") + " ";
+        trelloCmt += " **total time:** " + self.runTime + "";
+        for (var i = 0; i < self.comments.length; i++) {
+            trelloCmt += "\n----------------\n **" + self.comments[i].time + "** - " + $filter("date")(self.comments[i].current, "hh:mm a") +
+                "\n" + self.comments[i].desc + "\n\n";
+        }
+        return Trello.post(trelloUrl, { text: trelloCmt }, function () { console.log("successful cmt") });
     };
 
     /**

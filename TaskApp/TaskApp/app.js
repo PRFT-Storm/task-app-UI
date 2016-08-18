@@ -45,22 +45,6 @@ taskApp.controller("theController",
     }
 
     $scope.taskDone = function () {
-        console.log("task done");
-        $scope.state = 3;
-        stateManager($scope.state);
-
-        $scope.running = false;
-        $timeout.cancel(testStart);
-
-        var newCard = {
-            name: $scope.task.title,
-            desc: $scope.task.description,
-            // Place this card at the top of our list
-            idList: $scope.listSelect,
-            pos: "top"
-        };
-        console.log("posting to: " + $scope.listSelect);
-        Trello.post("/cards/", newCard, $scope.creationSuccess);
     }
 
     /////////////////////// everything below is associated with pulling trello data

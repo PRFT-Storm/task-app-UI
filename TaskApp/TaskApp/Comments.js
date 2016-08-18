@@ -18,7 +18,7 @@ angular.module("taskApp").factory("Comment", function ($filter) {
     /**
      * Public method, assigned to prototype
      */
-    Comment.prototype.submitComment = function (id) {
+    Comment.prototype.submitComment = function () {
         /* call the trello API in here */
         console.log("Card created successfully. Data returned");
         var self = this;

@@ -2,7 +2,7 @@
 
 angular.module("taskApp").controller("TrelloController", TrelloController);
 
-function TrelloController(Trello, $scope, $interval, $filter, Board, List, Card, Task) {
+function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, Card, Task) {
     //Trello variables
     $scope.boards = [];
     $scope.lists = [];
@@ -10,6 +10,7 @@ function TrelloController(Trello, $scope, $interval, $filter, Board, List, Card,
     
     $scope.boardSelect = "";
     $scope.listSelect = "";
+    $scope.cardSelect = "";
 
     //Task variables
     $scope.task = {
@@ -30,12 +31,10 @@ function TrelloController(Trello, $scope, $interval, $filter, Board, List, Card,
     $scope.runTime = [0, 0, 0]; //hr, min, sec
     $scope.timeTracker;
 
-
-
-    Trello.authenticate();
+    TrelloRepo.authenticate();
 
     $scope.setBoards = function () {
-        Trello.initialize().then(function(data) {
+        TrelloRepo.initialize().then(function (data) {
             $scope.boards = data.$$state.value;
             $scope.$apply();
             $("#board-select").material_select();
@@ -67,24 +66,23 @@ function TrelloController(Trello, $scope, $interval, $filter, Board, List, Card,
     //task functions 
 
     $scope.startTask = function () {
-        if ($scope.listSelect.id != "") {
-            $scope.newTask = Trello.taskInit($scope.task.title, $scope.task.desc, $scope.listSelect.id);
-            console.log($scope.newTask);
-            $scope.timeTracker = $interval(function () {
-                $scope.runTime = Trello.taskTimer($scope.runTime);
-            }, 1000);
+        console.log($scope.cardSelect);
+        if ($scope.cardSelect === "") {
+            $scope.newTask = TrelloRepo.taskInit($scope.task.title, $scope.task.desc, $scope.listSelect.id);
         }
-        console.log("no list selected");
+        $scope.timeTracker = $interval(function () {
+            $scope.runTime = TrelloRepo.taskTimer($scope.runTime);
+        }, 1000);
         
     }
     
     $scope.addComment = function () {
-        var addedCmt = Trello.commentManager($scope.runTime, $scope.task.comment.desc)
+        var addedCmt = TrelloRepo.commentManager($scope.runTime, $scope.task.comment.desc)
         $scope.task.comment.desc = "";
         $scope.newTask.comments.unshift(addedCmt);
     }
 
-    $scope.taskBreak = function (state) {
+    $scope.taskAction = function (state, card) {
         if (state === "break") {
             $interval.cancel($scope.timeTracker);
             $scope.task.comment.startTime = new Date();
@@ -93,13 +91,35 @@ function TrelloController(Trello, $scope, $interval, $filter, Board, List, Card,
             $scope.task.comment.endTime = new Date();
             var breakTimeDesc ="Took a break: "+ $filter("date")($scope.task.comment.startTime, "hh:mm a")+ " - "+ $filter("date")($scope.task.comment.endTime, "hh:mm a");
 
-            var addedCmt = Trello.commentManager($scope.runTime, breakTimeDesc)
+            var addedCmt = TrelloRepo.commentManager($scope.runTime, breakTimeDesc)
             $scope.task.comment.desc = "";
             $scope.newTask.comments.unshift(addedCmt);
             $scope.timeTracker = $interval(function () {
-                $scope.runTime = Trello.taskTimer($scope.runTime);
+                $scope.runTime = TrelloRepo.taskTimer($scope.runTime);
             }, 1000);
-
+        }
+        if (state === "done") {
+            console.log("are you done?");            
+            $scope.newTask.postComments();
+            $scope.listChange();
+            $interval.cancel($scope.timeTracker);
+            $scope.runTime = [0, 0, 0];
+        }
+        if (state === "set") {
+            console.log(card);
+            $scope.cardSelect = card;          
+            $scope.task.title = card.name;
+            $scope.task.desc = card.desc;
+            $scope.task.listId = card.listId;
+            $scope.newTask = new Task(
+                 card.id,
+                 $scope.task.title,
+                 $scope.task.desc,
+                 "new",
+                 $filter("date")(new Date(), "MM/dd/yy hh:mm a"),
+                 $scope.listSelect.id
+                );
+            $scope.listChange();
         }
     }
     
