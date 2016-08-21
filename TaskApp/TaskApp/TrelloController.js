@@ -12,7 +12,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
     $scope.listSelect = "";
     $scope.cardSelect = "";
 
-    //Task variables
+    //Task variables that need to be tested
     $scope.task = {
         title: "",
         desc: "",        
@@ -67,6 +67,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
 
     $scope.startTask = function () {
         console.log($scope.cardSelect);
+        $scope.state = "started";
         if ($scope.cardSelect === "") {
             $scope.newTask = TrelloRepo.taskInit($scope.task.title, $scope.task.desc, $scope.listSelect.id);
         }
@@ -77,17 +78,21 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
     }
     
     $scope.addComment = function () {
-        var addedCmt = TrelloRepo.commentManager($scope.runTime, $scope.task.comment.desc)
+        var addedCmt = TrelloRepo.commentManager($scope.runTime, $scope.task.comment.desc);
         $scope.task.comment.desc = "";
         $scope.newTask.comments.unshift(addedCmt);
     }
 
+    $scope.state = "";
     $scope.taskAction = function (state, card) {
+
         if (state === "break") {
+            $scope.state = state;
             $interval.cancel($scope.timeTracker);
             $scope.task.comment.startTime = new Date();
         }
         if (state === "resume") {
+            $scope.state = state;
             $scope.task.comment.endTime = new Date();
             var breakTimeDesc ="Took a break: "+ $filter("date")($scope.task.comment.startTime, "hh:mm a")+ " - "+ $filter("date")($scope.task.comment.endTime, "hh:mm a");
 
@@ -99,6 +104,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
             }, 1000);
         }
         if (state === "done") {
+            $scope.state = state;
             console.log("are you done?");            
             $scope.newTask.postComments();
             $scope.listChange();
@@ -106,6 +112,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
             $scope.runTime = [0, 0, 0];
         }
         if (state === "set") {
+
             console.log(card);
             $scope.cardSelect = card;          
             $scope.task.title = card.name;

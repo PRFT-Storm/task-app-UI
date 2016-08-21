@@ -8,7 +8,7 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
             console.log("authenticate")
             Trello.authorize(
             {
-                type: "popup",
+                type: "redirect",
                 name: "Task Tracker App",
                 scope: {
                     read: true,
@@ -16,15 +16,15 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
                 },
                 expiration: "never",
                 success: function () { console.log("auth success"); },
-                error: this.authFail,
+                error: this.authFail
             })
 
         };
 
-        this.initialize = function (request) {
+        this.initialize = function () {
             var deferred = $q.defer();
             var boardArr = [];
-            return Trello.get("/member/me/boards").then(function (boards) {
+            return Trello.get("/members/me/boards").then(function (boards) {
                 boards.forEach(function (board) {
                     var newBoard = new Board(board.id, board.name);
                     //$("#board-select").append($("<option>").text(board.name).attr("value", board.id));
