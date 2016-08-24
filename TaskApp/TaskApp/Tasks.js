@@ -35,14 +35,14 @@ angular.module("taskApp").factory("Task", function ($interval, $filter) {
         });
     };
 
-    Task.prototype.postComments = function () {
+    Task.prototype.postComments = function (runTime) {
         /* call the trello API in here */
         console.log("Card created successfully. Data returned");
         var self = this;
         var trelloCmt = "";
         var trelloUrl = "/cards/" + self.id + "/actions/comments";
         trelloCmt += "**date worked:** " + $filter("date")(new Date(), "MM/dd/yyyy") + " ";
-        trelloCmt += " **total time:** " + self.runTime + "";
+        trelloCmt += " **total time:** " + runTime[0] + " hrs " + runTime[1] + " mins " + runTime[2] + " secs";
         for (var i = 0; i < self.comments.length; i++) {
             trelloCmt += "\n----------------\n **" + self.comments[i].time + "** - " + $filter("date")(self.comments[i].current, "hh:mm a") +
                 "\n" + self.comments[i].desc + "\n\n";

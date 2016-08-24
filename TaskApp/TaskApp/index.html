@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
-<html ng-app="app">
+<html>
 <head>
-    <title>Test Angular App</title>
+    <title>Storm Anderson Media</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -18,200 +18,63 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" media="screen,projection">
     
     <script src="https://api.trello.com/1/client.js?key=ae7f3c6b7823b3434c09c2ba005eafc9" type="text/javascript"></script>
-    
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-82884396-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
     <link href="app.css" type="text/css" rel="stylesheet" />
+    <style>
+
+        @media (max-width: 600px) {
+            .pusher {
+                height: 70px;
+
+            }
+        }
+        @media (min-width: 600px) {
+            .pusher {
+                height: 200px;
+            }
+        }
+    </style>
 </head>
-<body onload="fix_selects()">
+<body>
 
+<div class="container" ng-controller="TrelloController">
     <div class="row">
-        <div id="left-nav" class="col s12 m4" ng-controller="TrelloController">
-            
-            <div class="header-section">
-                <h2>WhyTask</h2>
-                <h4>Made By: Storm Anderson</h4>               
-                <a href="#!email"><span class="email">stormea36@gmail.com</span></a>
-                <ul>
-                    <li><a href="#!">Board: {{boardSelect}}</a></li>
-                    <li><div class="divider"></div></li>
-                    <li><a href="#!">list: {{listSelect}}</a></li>
-                </ul>
-            </div>    
-            <div class="trello-section">
-                <div class="input-field col s12">
-                    <select id="board-select" ng-model="boardSelect" ng-change="boardChange()">
-                        <option selected></option>
-                    </select>
-                    <label>Select a Board</label>
-                </div>
-                <div class="input-field col s12">
-                    <select id="list-select" ng-model="listSelect"
-                            ng-change="listChange()">
-                        <option selected></option>
-                    </select>
-                    <label ng-show="boardSelect">Select a List</label>
-                </div>
-                <hr/>
-                <h5>Edit a card<small> <a href="#"> New Task</a></small></h5>
-                
-                <div class="card-box">
-                    <div class="card" ng-repeat="card in cardsArr">
-                        <div class="c-content">
-                            <span class="c-title truncate" title="{{ card.name }}">{{ card.name }}</span>
-                            <p>
-                                {{ card.desc }}
-                            </p>
-                        </div>
-                        <div class="card-action teal lighten-5">
-                            <a href="#" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Edit </a>
-                            <a href="#" class="teal-text darken-4-text">This is a link</a>
-                        </div>
-                    </div>
-                </div>
-                <!--<ul>
-                    <li ng-repeat="card in cardsArr">
-                        <div class="row">
-                            <div class="col s10">
-                                <p class="card-title">{{ card.name }}</p>
-                                <p class="card-desc">{{ card.desc }} <span> <i class="tiny material-icons">comment</i></span></p>
-                                
-                            </div>
-                            <div class="col s2"><span>{{ card.cmtCount }} <i class="small material-icons">mode_edit</i></span></div>
-                        </div>
-                        <p> - <br/></p>
-                    </li>
-                </ul>-->
-            </div>
-
-        </div> <!--sidebar-->
-
-        <div class="col s12 m8" ng-controller="TaskController">
-
-            <div class="row">
-                <div class="col s12 m6 offset-m3">
-
-                    <div class="mat-box" id="state-0" ng-show="states[0]">
-                        <form>
-                            <h3>Task Timer App</h3>  
-                            <p class="subheader">testing angular with animate &amp; async data integration</p>
-
-                                <div class="row">
-                                    <div class="input-field col s12">
-                                        <input id="task_title" type="text" class="validate" ng-model="task.title" />
-                                        <label for="task_title">Task Title</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="input-field col s12">
-                                        <textarea id="task_desc" class="materialize-textarea" ng-model="task.description"></textarea>
-                                        <label for="task_desc">Addition Details:</label>
-                                    </div>
-                                </div>
-                                <button type="button" ng-click="start()" class="button buttonBlue buttonFull">
-                                    Start
-                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                                </button>
-</form>
-                    </div>
-
-                    <div class="mat-box" id="state-1" ng-show="states[1]">
-                        <form>
-                            <h3>Task Timer Running</h3>
-
-                            <p>{{task.title}}</p>
-                            <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
-                            <div class="row valign-wrapper">
-                                <div class="input-field col s10">
-                                    <!--<i class="material-icons prefix medium">mode_edit</i>-->
-                                    <textarea id="task_comment" class="materialize-textarea" ng-model="comment"></textarea>
-                                    <label for="task_comment">Comment</label>
-                                </div>
-                                <div class="col s2 valign">
-                                    <a href="#" ng-click="commentAdd()"><i class="material-icons small click">done</i></a>
-                                </div>
-                            </div>
-                            <ul id="comment-box">
-                                <li class="row valign-wrapper comment-animate" ng-repeat="comment in task.comments">
-                                    <div class="col s1">
-                                        <a href="#" ng-click="task.comments.splice($index,1)">X</a>
-                                    </div>
-                                    <div class="col s3 smaller-text">
-                                        <b>{{ comment.time }}</b>
-                                        <br />
-                                        <span>{{comment.current | date:'hh:mm a'}}</span>
-                                    </div>
-                                    <div class="col s8 valign">
-                                        {{ comment.description }}
-                                    </div>
-                                </li>
-                            </ul>
-                            <div class="buttonGroup">
-                                <button type="button" class="button buttonBlue buttonHalf" ng-click="taskBreak()">
-                                    Break
-                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                                </button>
-                                <button type="button" class="button buttonRed buttonHalf" ng-click="taskDone()">
-                                    Done
-                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="mat-box" id="state-2" ng-show="states[2]">
-                        <form>
-                            <h3>Task Timer Paused</h3>
-                            <p>{{task.title}}</p>
-                            <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
-                            <ul id="comment-box">
-                                <li class="row valign-wrapper" ng-repeat="comment in task.comments" watch-scope="comment">
-                                    <div class="col s1">
-                                        <a href="#" ng-click="task.comments.splice($index,1)"><i class="material-icons small">delete</i></a>
-                                    </div>
-                                    <div class="col s4">
-                                        <b>{{ comment.time }}</b>
-                                        <br />
-                                        <span>{{comment.current | date:'hh:mm a'}}</span>
-                                    </div>
-                                    <div class="col s7 valign">
-                                        {{ comment.description }}
-                                    </div>
-                                </li>
-                            </ul>
-                            <div class="buttonGroup">
-                                <button type="button" class="button buttonBlue buttonHalf" ng-click="start()">
-                                    Resume
-                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                                </button>
-                                <button type="button" class="button buttonRed buttonHalf" ng-click="taskDone()">
-                                    Done
-                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="mat-box" id="state-3" ng-show="states[3]">
-                        <form>
-                            <h3>Task Completed</h3>
-                            <p class="subheader">{{task.title}}</p>
-                            <p>Time worked: {{time[0]}} hrs {{time[1]}} mins {{time[2]}} secs</p>
-                            {{task}}
-                            <div class="buttonGroup">
-                                <button type="button" class="button buttonBlue buttonHalf" ng-click="start()">
-                                    Start new task
-                                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                                </button>
-
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="pusher">
 
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <div class="row">
+        <div class="col s12">
+            <h2>Storm Anderson Media</h2>
+            <p>Web design and development with simplicity.</p>
+        </div>
+        <div class="col s12 m7">
+            <p>Contact me: <a href="mailto:stormea36@gmail.com">stormea36@gmail.com</a>
+                <hr>
+            <b>Demos and Work</b></p>
+            <ul>
+                <li><a href="/mofo">Mofo Video Landing Page</a></li>
+                <li><a href="task-app-UI/TaskApp/TaskApp/testing.html">Trello Task App (Angular)</a></li>
+                <li><a href="http://www.safaribeachtan.com">Safari Beach Tan (Laravel)</a></li>
+                <li><a href="BecksHVAC.com">Becks Heating & Air</a></li>
+                <li><a href="beal_site_preview.pdf">Beal Budgeting (WordPress theme)</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
     
 </body>
 </html>

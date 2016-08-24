@@ -24,9 +24,9 @@
     <div class="container" ng-controller="TrelloController">
         <div class="row">
             <div class="col s12">
-                <h2>Task App <small>Created by: <a href="mailto:stormea36@gmail.com">Storm Anderson</a></small></h2df>
+                <h2>Trello Task App <small class="timer-big">Created by: <a href="mailto:stormea36@gmail.com">Storm Anderson</a></small></h2>
             </div>
-            </div>
+        </div>
         <div class="row">
             <div class="col s12 m4">
                 <h4>Board Select</h4>
@@ -80,36 +80,50 @@
                     </div>
                 </div>
             </div>
-            <div class="col s12 m8" id="card-box">
-                <h4>Create a task</h4>
-                <p class="lead">You can create a new task here and begin filling in the title and description below. Once ready, click start to begin the timer.</p>
-                <div class="input-field col s12">
-                <input id="task_title" type="text" ng-model="task.title" />
-                <label for="task_title">Task Title</label>
-                </div>
-                <div class="input-field col s12">
-                <textarea id="task_desc" class="materialize-textarea" ng-model="task.desc"></textarea>
-                <label for="task_desc">Task Description</label>
-                </div>
-                    <button type="button" ng-click="startTask()" class="button buttonBlue buttonFull">
-                    Start
-                    <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                </button>
+            <div class="col s12 m8">
 
-                <div ng-hide="state == 'done' || state == ''">
+                <div class="card-box" ng-hide="state != ''">
+                    <h4>Create a task</h4>
+                    <p class="lead">You can create a new task here and begin filling in the title and description below. Once ready, click start to begin the timer.</p>
+                    <div class="input-field col s12">
+                    <input id="task_title" type="text" ng-model="task.title" />
+                    <label for="task_title" class="tLabel">Task Title</label>
+                    </div>
+                    <div class="input-field col s12">
+                    <textarea id="task_desc" class="materialize-textarea" ng-model="task.desc"></textarea>
+                    <label for="task_desc" class="tLabel">Task Description</label>
+                    </div>
+                        <button type="button" ng-click="startTask()" class="button buttonBlue buttonFull">
+                        Start
+                        <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                    </button>
+                </div>
+
+                <div class="card-box" ng-hide="state == '' || state == 'hide'">
+                <!--<div class="card-box">-->
                     <h5>{{task.title}}</h5>
                     <div class="row">
                         <div class="col s12 m3">
                             <p>
-                                <b>Time worked:</b><br>
-                                {{runTime[0]}} hrs {{runTime[1]}} mins {{runTime[2]}} secs
+                                <b>Description:</b>
                             </p>
                         </div>
                         <div class="col s12 m9">
                             <p>
-                                <b>Description:</b><br>
                                 {{task.desc}}
                             </p>
+                        </div>
+                    </div>
+                    <div class="row cyan lighten-4 add-padding">
+                        <div class="col s12 m8">
+                            <b>Time worked:</b><br>
+                            <span class="timer-big">{{runTime[0]}} hrs {{runTime[1]}} mins</span><span class="timer-small"> {{runTime[2]}} secs</span>
+                        </div>
+                        <div class="col s12 m4">
+
+                            <a class="btn-floating btn-large waves-effect waves-light deep-orange lighten-1" ng-click="taskAction('break')"><i class="material-icons large">pause</i></a>
+                            <a class="btn-floating btn-large waves-effect waves-light " ng-click="taskAction('resume')"><i class="material-icons large">play_arrow</i></a>
+
                         </div>
                     </div>
 
@@ -127,7 +141,7 @@
                     <ul id="comment-box">
                         <li class="row valign-wrapper comment-animate" ng-repeat="comment in newTask.comments">
                             <div class="col s1">
-                                <a href="#/" ng-click="task.comments.splice($index,1)">X</a>
+                                <a href="#/" ng-click="newTask.comments.splice($index,1)">X</a>
                             </div>
                             <div class="col s3 smaller-text">
                                 <b>{{ comment.time }}</b>
@@ -140,26 +154,27 @@
                         </li>
                     </ul>
 
-                    <div class="buttonGroup">
-                        <button type="button" class="button buttonBlue buttonHalf" ng-click="taskAction('break')" ng-hide="state == '' || state == 'break'">
-                            Break
-                            <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                        </button>
-                        <button type="button" class="button buttonRed buttonHalf" ng-click="taskAction('resume')" ng-hide="state == '' || state != 'break'">
-                            resume
-                            <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                        </button>
-                        <button type="button" class="button buttonRed buttonHalf" ng-click="taskAction('done')" ng-hide="state == 'done' || state == ''">
-                            Done
-                            <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
+                    <div class="buttonGroup center-align">
+                        <button type="button" class="button waves-effect waves-light light-blue darken-3" ng-click="taskAction('done')" ng-hide="state == 'done' || state == ''">
+                            Complete Task <i class="material-icons right">send</i>
                         </button>
                     </div>
                 </div>
+
             </div>
         </div>
 
-    </div>   
+    </div>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+        ga('create', 'UA-82884396-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
     <script src="app.js"></script>
     <script src="TrelloController.js"></script>
     <script src="TrelloRepository.js"></script>

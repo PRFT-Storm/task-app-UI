@@ -86,12 +86,12 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
     $scope.state = "";
     $scope.taskAction = function (state, card) {
 
-        if (state === "break") {
+        if (state === "break" && $scope.state != "break") {
             $scope.state = state;
             $interval.cancel($scope.timeTracker);
             $scope.task.comment.startTime = new Date();
         }
-        if (state === "resume") {
+        if (state === "resume" && $scope.state == "break") {
             $scope.state = state;
             $scope.task.comment.endTime = new Date();
             var breakTimeDesc ="Took a break: "+ $filter("date")($scope.task.comment.startTime, "hh:mm a")+ " - "+ $filter("date")($scope.task.comment.endTime, "hh:mm a");
@@ -105,19 +105,20 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, Board, List, C
         }
         if (state === "done") {
             $scope.state = state;
-            console.log("are you done?");            
-            $scope.newTask.postComments();
+            $scope.newTask.postComments($scope.runTime);
             $scope.listChange();
             $interval.cancel($scope.timeTracker);
             $scope.runTime = [0, 0, 0];
+            $scope.state = '';
+            $scope.task.title = '';
+            $scope.task.desc = '';
         }
         if (state === "set") {
-
-            console.log(card);
             $scope.cardSelect = card;          
             $scope.task.title = card.name;
             $scope.task.desc = card.desc;
             $scope.task.listId = card.listId;
+            $(".tLabel").addClass("active");
             $scope.newTask = new Task(
                  card.id,
                  $scope.task.title,
