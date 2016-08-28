@@ -5,7 +5,6 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
     return new function () {
 
         this.authenticate = function () {
-            console.log("authenticate")
             Trello.authorize(
             {
                 type: "redirect",
@@ -31,15 +30,15 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
                     boardArr.push(newBoard);                    
                 });
                 deferred.resolve(boardArr);
-                $rootScope.$$phase || $rootScope.$apply
+                $rootScope.$$phase || $rootScope.$apply;
                 return deferred.promise;
                 //$("#board-select").material_select();
             });
-        }
+        };
 
          this.authFail = function () {
             console.log('auth failed');
-         }
+         };
          
         // below functions handle new task properties
 
@@ -57,17 +56,20 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
          };
 
          this.taskInit = function (title, desc, listId) {
-             var newTask = new Task(
-                 "123",
-                 title,
-                 desc,
-                 "new",
-                 $filter("date")(new Date(), "MM/dd/yy hh:mm a"),
-                 listId
+             if(!title || listId) {
+                 var newTask = new Task(
+                     "123",
+                     title,
+                     desc,
+                     "new",
+                     $filter("date")(new Date(), "MM/dd/yy hh:mm a"),
+                     listId
                  );
-             newTask.createTask();
-             return newTask;
-         }
+                 newTask.createTask();
+                 return newTask;
+             } return console.log("task not created");
+
+         };
          
          this.commentManager = function (time, comment) {
              var tempTime = time[0] + " hr " + time[1] + " min";
@@ -78,7 +80,7 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
                 desc: comment
              };
              return tempCmt;
-         }
+         };
 
     };
 });

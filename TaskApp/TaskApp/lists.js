@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-angular.module("taskApp").factory("List", function (Card) {
+angular.module("taskApp").factory("List", function (Card, Task) {
 
     /**
    * Constructor, with class name
@@ -18,14 +18,19 @@ angular.module("taskApp").factory("List", function (Card) {
     List.prototype.getCards = function () {
         /* call the trello API in here */
         var self = this;
-        var cardArr = [];
+        var taskArr = [];
         var trelloListUrl = "/lists/" + self.id + "/cards";
         return Trello.get(trelloListUrl).then(function (response) {
             response.forEach(function (card) {
-                var newCard = new Card(card.id, card.name, card.desc, card.badges.comments, card.idList);
-                cardArr.push(newCard);
+                var newCard = new Task(card.id, card.name, card.desc, "existing", "", card.idList);
+                newCard.commentFields.cmtCount = card.badges.comments;
+                taskArr.push(newCard);
             });
-            return cardArr;
+            //response.forEach(function (card) {
+            //    var newCard = new Card(card.id, card.name, card.desc, card.badges.comments, card.idList);
+            //    cardArr.push(newCard);
+            //});
+            return taskArr;
         });
     };
 

@@ -28,7 +28,7 @@ angular.module("taskApp").factory("Comment", function ($filter) {
         var trelloUrl = "/cards/" + cardId + "/actions/comments";
         trelloCmt += "date worked: **" + $filter("date")(new Date(), "MM/dd/yyyy") + "**";
         for (var i = 0; i < $scope.task.comments.length; i++) {
-            trelloCmt += "\n----------------\n **" + $scope.task.comments[i].time + "** - " + $filter("date")($scope.task.comments[i].current, "hh:mm a") +
+            trelloCmt += "\n --- \n| **" + $scope.task.comments[i].time + "** - " + $filter("date")($scope.task.comments[i].current, "hh:mm a") +
                 "\n" + $scope.task.comments[i].description + "\n\n";
         }
         Trello.post(trelloUrl, { text: trelloCmt },

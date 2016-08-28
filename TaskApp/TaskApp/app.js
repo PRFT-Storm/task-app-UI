@@ -1,9 +1,9 @@
 ﻿'use strict';
-var taskApp = angular.module("taskApp", ["ngAnimate"]);
+var taskApp = angular.module("taskApp", ["ngAnimate", "ngSanitize","ng-showdown"]);
 
 taskApp.controller("theController",
     ["$scope", "$filter", "$timeout","$routeParams",
-        function ($scope, $filter, $timeout) {
+        function ($scope, $filter, $timeout, $showdown) {
 
     $scope.running = false;
     $scope.state = 0;

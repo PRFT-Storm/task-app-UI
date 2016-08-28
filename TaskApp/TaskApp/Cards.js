@@ -5,38 +5,27 @@ angular.module("taskApp").factory("Card", function () {
    * Constructor, with class name
    */
 
-    function Card(id, name, desc, cmtCount, listId) {
+    function Card(id, name, desc, listId) {
         // Public properties, assigned to the instance ('this')
         this.id = id;
         this.name = name;
         this.desc = desc;
-        this.cmtCount = cmtCount;
         this.listId = listId;
     }
 
-    /**
-     * Public method, assigned to prototype
-     */
-    Card.prototype.getComments = function (id) {
-        /* call the trello API in here */
-    };
+    Card.prototype.getComments = function() {
+        var self = this;
+        var cmtString = "";
+        var trelloUrl = "/cards/"+self.id+"/actions";
+        return Trello.get(trelloUrl).then(function (response) {
+            response.forEach(function (comment) {
+                cmtString += comment.data.text;
+                cmtString += "<br>";
+            });
 
-    /**
-     * Static method, assigned to class
-     * Instance ('this') is not available in static context
-     */
-    Card.build = function (data) {
-        //if (!checkRole(data.role)) {
-        //    return;
-        //}
-        return new Card(
-          data.id,
-          data.name,
-          data.desc,
-          data.cmtCount // another model / adjust for JSON object returned
-        );
-    };
-
+            return cmtString;
+        });
+    }
     /**
      * Return the constructor function
      */

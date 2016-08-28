@@ -13,6 +13,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-materialize/0.1.9/angular-materialize.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.8/angular-sanitize.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.4.3/showdown.min.js"></script>
+    <script type="text/javascript" src="markdown/ng-showdown.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" media="screen,projection">
      
@@ -22,87 +26,86 @@
 </head>
 <body>
     <div class="container" ng-controller="TrelloController">
+
+        <div id="slide-out" class="side-nav commentNav">
+            <div markdown-to-html="commentString"></div>
+        </div>
+
         <div class="row">
             <div class="col s12">
                 <h2>Trello Task App <small class="timer-big">Created by: <a href="mailto:stormea36@gmail.com">Storm Anderson</a></small></h2>
             </div>
         </div>
-        <div class="row">
+
+        <div class="row grey lighten-5 card-panel valign-wrapper">
             <div class="col s12 m4">
-                <h4>Board Select</h4>
+                <h5>Board Select<br></h5>
+                <p>Select a board and list to work on.</p>
                 <a class="btn" href="#/" ng-click="setBoards()" ng-hide="boards">set boards</a>
+            </div>
+            <div class="input-field col s12 m4">
+                <select id="board-select" ng-model="boardSelect" ng-change="boardChange()" ng-options="board.name for board in boards track by board.id" ng-init="setBoards()">
+                    <option selected></option>
+                </select>
+                <label for="board-select">Select a Board</label>
+            </div>
+            <div class="input-field col s12 m4">
+                <select id="list-select" ng-model="listSelect" ng-change="listChange()" ng-options="list.name for list in lists track by list.id">
+                    <option selected></option>
+                </select>
+                <label for="list-select" ng-show="boardSelect">Select a List</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12 m5">
 
                 <div class="row">
-                    <div class="input-field col s12">
-                        <select id="board-select" ng-model="boardSelect" ng-change="boardChange()" ng-options="board.name for board in boards track by board.id" ng-init="setBoards()">
-                            <option selected></option>
-                        </select>
-                        <label for="board-select">Select a Board</label>
-                    </div>
-                    <div class="input-field col s12">
-                        <select id="list-select" ng-model="listSelect" ng-change="listChange()" ng-options="list.name for list in lists track by list.id">
-                            <option selected></option>
-                        </select>
-                        <label for="list-select" ng-show="boardSelect">Select a List</label>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col s12" ng-show="listSelect">
-                        <h5>Cards:</h5>
+                        <h5 ng-hide="state != ''">Select a task</h5>
+
                         <ul class="lists card-list">
-                            <li ng-repeat="card in cards" class="card">
+                            <li class="card" ng-hide="state != '' || listSelect === ''">
                                 <div class="c-content">
-                                    <span class="c-title truncate" title="{{ card.name }}">{{ card.name }}</span>
+                                    <div class="input-field">
+                                        <input id="task_title" type="text" ng-model="task.name" />
+                                        <label for="task_title" class="tLabel">New Task</label>
+                                    </div>
+
+                                    <div class="input-field" ng-show="desc">
+                                        <textarea id="task_desc" class="materialize-textarea" ng-model="task.desc"></textarea>
+                                        <label for="task_desc" class="tLabel">Task Description</label>
+                                    </div>
+                                    <p class=" thin-padding"><a href="#/" class="light-blue-text text-darken-3" ng-click="desc=true" ng-hide="desc">Set a Description</a></p>
+                                </div>
+                                <div class="card-action teal lighten-5">
+                                    <a href="#/" class="teal-text darken-5-text" ng-click="startTask()">Start Task</a> &nbsp; &nbsp;
+                                </div>
+
+                            </li>
+                            <li ng-repeat="taskItem in tasks" class="card">
+                                <div class="c-content">
+                                    <span class="c-title truncate" title="{{ taskItem.name }}">{{ taskItem.name }}</span>
                                     <p>
-                                        {{ card.desc }} - {{card.cmtCount}}<i class="tiny material-icons">comment</i>
+                                        {{ taskItem.desc }} - {{taskItem.commentFields.cmtCount}}<i class="tiny material-icons">comment</i>
                                     </p>
                                 </div>
                                 <div class="card-action teal lighten-5">
-                                    <a href="#" ng-click="taskAction('set',card)" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Edit </a>
-                                    <a href="#" class="teal-text darken-4-text">This is a link</a>
+                                    <a href="#/" ng-click="startTask(taskItem)" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Start </a>
+                                    <a href="#/" ng-click="taskAction('comments',taskItem)" data-activates="slide-out" class="teal-text darken-4-text cmt-button">Comments</a>
                                 </div>
                             </li>
                         </ul>
-                        <!--<div class="card-box">
-                            <div class="card" ng-repeat="card in cardsArr">
-                                <div class="card-content">
-                                    <span class="card-title truncate" title="{{ card.name }}">{{ card.name }}</span>
-                                    <p>
-                                        {{ card.desc }}
-                                    </p>
-                                </div>
-                                <div class="card-action teal lighten-5">
-                                    <a href="#" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Edit </a>
-                                    <a href="#" class="teal-text darken-4-text">This is a link</a>
-                                </div>
-                            </div>
-                        </div>-->
+
                     </div>
                 </div>
             </div>
-            <div class="col s12 m8">
-
-                <div class="card-box" ng-hide="state != ''">
-                    <h4>Create a task</h4>
-                    <p class="lead">You can create a new task here and begin filling in the title and description below. Once ready, click start to begin the timer.</p>
-                    <div class="input-field col s12">
-                    <input id="task_title" type="text" ng-model="task.title" />
-                    <label for="task_title" class="tLabel">Task Title</label>
-                    </div>
-                    <div class="input-field col s12">
-                    <textarea id="task_desc" class="materialize-textarea" ng-model="task.desc"></textarea>
-                    <label for="task_desc" class="tLabel">Task Description</label>
-                    </div>
-                        <button type="button" ng-click="startTask()" class="button buttonBlue buttonFull">
-                        Start
-                        <div class="ripples buttonRipples"><span class="ripplesCircle"></span></div>
-                    </button>
-                </div>
-
-                <div class="card-box" ng-hide="state == '' || state == 'hide'">
+            <div class="col s12 m7">
+                <h4 class="grey-text center-align" ng-show="state == ''"><em>Please create or select a task to work on to begin.</em></h4>
+                <div class="card-box cg-animate" ng-hide="state == '' || state == 'hide'">
                 <!--<div class="card-box">-->
-                    <h5>{{task.title}}</h5>
-                    <div class="row">
+                    <h5>{{task.name}}</h5>
+                    <div class="row" ng-hide="task.desc===''">
                         <div class="col s12 m3">
                             <p>
                                 <b>Description:</b>
@@ -117,20 +120,18 @@
                     <div class="row cyan lighten-4 add-padding">
                         <div class="col s12 m8">
                             <b>Time worked:</b><br>
-                            <span class="timer-big">{{runTime[0]}} hrs {{runTime[1]}} mins</span><span class="timer-small"> {{runTime[2]}} secs</span>
+                            <span class="timer-big" ng-hide="state == ''">{{runTime[0]}} hrs {{runTime[1]}} mins</span><span class="timer-small"> {{runTime[2]}} secs</span>
                         </div>
                         <div class="col s12 m4">
-
                             <a class="btn-floating btn-large waves-effect waves-light deep-orange lighten-1" ng-click="taskAction('break')"><i class="material-icons large">pause</i></a>
                             <a class="btn-floating btn-large waves-effect waves-light " ng-click="taskAction('resume')"><i class="material-icons large">play_arrow</i></a>
-
                         </div>
                     </div>
 
                     <div class="row valign-wrapper">
                         <div class="input-field col s10">
                             <!--<i class="material-icons prefix medium">mode_edit</i>-->
-                            <textarea id="task_comment" class="materialize-textarea" ng-model="task.comment.desc"></textarea>
+                            <textarea id="task_comment" class="materialize-textarea" ng-model="task.commentFields.desc"></textarea>
                             <label for="task_comment">Comment</label>
                         </div>
                         <div class="col s2 valign">
@@ -139,7 +140,7 @@
                     </div>
 
                     <ul id="comment-box">
-                        <li class="row valign-wrapper comment-animate" ng-repeat="comment in newTask.comments">
+                        <li class="row valign-wrapper comment-animate" ng-repeat="comment in task.comments">
                             <div class="col s1">
                                 <a href="#/" ng-click="newTask.comments.splice($index,1)">X</a>
                             </div>
@@ -161,10 +162,19 @@
                     </div>
                 </div>
 
+                    <!--<b>{{ cmt.date }}</b>-->
+                    <!--<ul>-->
+                    <!--<li>{{cmt}}</li>-->
+                    <!--</ul>-->
+
             </div>
+
+
         </div>
 
     </div>
+
+
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
