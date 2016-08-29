@@ -15,7 +15,7 @@ angular.module("taskApp").factory("List", function (Card, Task) {
     /**
      * Public method, assigned to prototype
      */
-    List.prototype.getCards = function () {
+    List.prototype.getCards = function (boardLabels) {
         /* call the trello API in here */
         var self = this;
         var taskArr = [];
@@ -24,12 +24,11 @@ angular.module("taskApp").factory("List", function (Card, Task) {
             response.forEach(function (card) {
                 var newCard = new Task(card.id, card.name, card.desc, "existing", "", card.idList);
                 newCard.commentFields.cmtCount = card.badges.comments;
+                newCard.labels = card.labels;
+                newCard.boardLabels = boardLabels;
                 taskArr.push(newCard);
             });
-            //response.forEach(function (card) {
-            //    var newCard = new Card(card.id, card.name, card.desc, card.badges.comments, card.idList);
-            //    cardArr.push(newCard);
-            //});
+
             return taskArr;
         });
     };

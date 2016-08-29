@@ -87,12 +87,42 @@
                                 <div class="c-content">
                                     <span class="c-title truncate" title="{{ taskItem.name }}">{{ taskItem.name }}</span>
                                     <p>
-                                        {{ taskItem.desc }} - {{taskItem.commentFields.cmtCount}}<i class="tiny material-icons">comment</i>
+                                        {{ taskItem.desc  | cut:true:100:' ...' }}
+                                    </p>
+                                    <p>
+                                        &nbsp;<span class="infoBadge {{label.color}} lighten-2" ng-repeat="label in taskItem.labels">{{label.name}}</span>
+                                        <span class=" infoBadge"><i class="tiny material-icons">comment</i>{{taskItem.commentFields.cmtCount}} Comments</span>
+
+                                    <!--<div class="row">-->
+                                        <!--<div class="input-field col s1">-->
+                                            <!--<span class="label-code {{taskItem.labels[0].color}}">&nbsp;</span>-->
+                                        <!--</div>-->
+
+                                        <!--<div class="input-field col s5 m5">-->
+                                            <!--<select class="labelSelect">-->
+                                                <!--<option-->
+                                                        <!--ng-selected="taskItem.labels[0].id == label.id"-->
+                                                        <!--ng-repeat="label in taskItem.boardLabels"-->
+                                                        <!--ng-value="label.id">{{label.name}}</option>-->
+                                                <!--&lt;!&ndash;<option selected ng-if="taskItem.labels[0].color == label.color"></option>&ndash;&gt;-->
+                                            <!--</select>-->
+
+                                        <!--</div>-->
+                                         <!--<div class="input-field col s6">-->
+                                             <!-- -->
+                                         <!--</div>-->
+                                        <!--<div class="input-field col s4">-->
+                                            <!-- -->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+
                                     </p>
                                 </div>
                                 <div class="card-action teal lighten-5">
                                     <a href="#/" ng-click="startTask(taskItem)" class="teal-text darken-4-text"><i class="tiny material-icons">mode_edit</i> Start </a>
                                     <a href="#/" ng-click="taskAction('comments',taskItem)" data-activates="slide-out" class="teal-text darken-4-text cmt-button">Comments</a>
+                                    <a href="#/" ng-click="deleteTask(taskItem)" data-activates="slide-out" class="teal-text darken-4-text cmt-button"><i class="tiny material-icons">delete</i></a>
                                 </div>
                             </li>
                         </ul>
@@ -117,6 +147,28 @@
                             </p>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col s12 m3">
+                            <p>Configurations</p>
+                        </div>
+                        <div class="input-field col s5 m5">
+                            <select id="label-select">
+                                <option
+                                ng-selected="task.labels[0].id == label.id"
+                                ng-repeat="label in labels"
+                                ng-value="label.id">{{label.name}}</option>
+
+                            </select>
+                        </div>
+                        <div class="input-field col s12 m4">
+                            <select id="taskLabelSelect" ng-model="listSelect" ng-options="list.name for list in lists track by list.id">
+                            </select>
+                            <label for="list-select" ng-show="boardSelect">Change List</label>
+                        </div>
+
+                    </div>
+
                     <div class="row cyan lighten-4 add-padding">
                         <div class="col s12 m8">
                             <b>Time worked:</b><br>
@@ -156,8 +208,9 @@
                     </ul>
 
                     <div class="buttonGroup center-align">
+                        <button type="button" class="button waves-effect waves-light red lighten-4 red-text text-darken-4" ng-click="reset()">Cancel</button>
                         <button type="button" class="button waves-effect waves-light light-blue darken-3" ng-click="taskAction('done')" ng-hide="state == 'done' || state == ''">
-                            Complete Task <i class="material-icons right">send</i>
+                            Finished <i class="material-icons right">send</i>
                         </button>
                     </div>
                 </div>

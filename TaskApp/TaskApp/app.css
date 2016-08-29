@@ -62,6 +62,25 @@ strong {
     font-size:1.4rem;
 }
 
+span.infoBadge {
+    min-width: 3rem;
+    padding: 2px 8px;
+    text-align: center;
+    font-size: 1rem;
+    line-height: inherit;
+    color: #757575;
+    /* position: absolute; */
+    right: 15px;
+    box-sizing: border-box;
+}
+
+.label-code {
+    height: 100%;
+    width:2px;
+    margin:0;
+    padding:0;
+}
+
 .card-box {
     background-color: white;
     border: 1px solid rgb(216, 216, 216);
@@ -69,6 +88,14 @@ strong {
     padding:5px 10px;
 }
 
+.cg-animate.ng-enter, .cg-animate.ng-move {
+    transition: all 0.5s linear;
+    opacity: 0;
+}
+.cg-animate.ng-enter.ng-enter-active,
+.cg-animate.ng-move.ng-move-active {
+    opacity: 1;
+}
 
 .card.ng-enter, .repeated-item.ng-move {
     transition: all 0.5s linear;
@@ -84,8 +111,8 @@ strong {
   the leave event is triggered for the element
   that has the .repeated-item class
 */
-.card.ng-leave {
-    /*animation: 0.5s my_animation;*/
+.cg-animate.ng-leave {
+    animation: 0.5s my_animation;
 }
 
 @keyframes my_animation {
@@ -115,39 +142,6 @@ form {
 	border: 1px solid #ebebeb;
 	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
-
-
-.cg-animate.ng-enter, .cg-animate.ng-move {
-  transition: all 0.5s linear;
-  opacity: 0;
-}
-
-/*
- The ng-enter-active and ng-move-active
- are where the transition destination properties
- are set so that the animation knows what to
- animate.
-*/
-.cg-animate.ng-enter.ng-enter-active,
-.cg-animate.ng-move.ng-move-active {
-  opacity: 1;
-}
-
-/*
-  We're using CSS keyframe animations for when
-  the leave event is triggered for the element
-  that has the .repeated-item class
-*/
-.cg-animate.ng-leave {
-  animation: 0.5s comment_animate;
-}
-
-@keyframes comment_animate {
-  from { opacity:1; }
-  to { opacity:0; }
-}
-
-
 
 /* Button */
 .button {

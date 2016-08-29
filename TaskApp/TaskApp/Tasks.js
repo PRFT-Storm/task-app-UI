@@ -13,6 +13,9 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card) {
         this.state = state;
         this.startTime = startTime;
         this.listId = listId;
+        this.endTime = null;
+        this.labels = [];
+        this.boardLabels = [];
         this.comments = [];
         this.commentFields = {
             time:"",
@@ -23,7 +26,7 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card) {
             type: "",
             cmtCount : 0
         };
-        this.endTime = null;
+
     };
 
     var TaskObj = function () {
@@ -64,6 +67,41 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card) {
                 "\n>" + self.comments[i].desc + "\n\n ";
         }
         return Trello.post(trelloUrl, { text: trelloCmt }, function () { console.log("successful cmt") });
+    };
+
+    Task.prototype.setLabel = function () {
+        var self = this;
+        //var trelloUrl = "/cards/" + self.id + "/labels";
+        //var trelloConfig = { color: self.color, name: self.label };
+
+        var trelloUrl = "/cards/" + self.id + "/idLabels";
+        var trelloConfig = { value: "label id value" };
+
+
+        return Trello.post(trelloUrl,trelloConfig).then(function (data) {
+            var cardId = data.id;
+            console.log("task created!: "+cardId);
+            self.id = cardId;
+            return cardId;
+        });
+    }
+
+    Task.prototype.deleteTask = function () {
+        /* call the trello API in here */
+        var self = this;
+        var newCard = {
+            name: self.name,
+            desc: self.desc,
+            // Place this card at the top of our list
+            idList: self.listId,
+            pos: "top"
+        };
+        return Trello.post("/cards/", newCard).then(function (data) {
+            var cardId = data.id;
+            console.log("task created!: "+cardId);
+            self.id = cardId;
+            return cardId;
+        });
     };
 
     /**

@@ -8,6 +8,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
     $scope.lists = [];
     $scope.tasks = [];
     $scope.comments = [];
+    $scope.labels = [];
 
     $scope.commentString = "";
 
@@ -15,6 +16,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
     $scope.listSelect = "";
     $scope.taskSelect = "";
     $scope.taskComment = "";
+    $scope.taskLabel = "";
 
     $scope.desc = false;
     //Task variables that need to be tested
@@ -41,13 +43,18 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
                 $scope.lists = data;
                 $scope.$apply();
                 $("#list-select").material_select();
+                $scope.boardSelect.getLabels().then(function (data) {
+                    $scope.labels = data;
+                    $scope.$apply();
+                });
             });
         }        
     };
 
     $scope.listChange = function () {
         if ($scope.listSelect !== null) {
-            $scope.listSelect.getCards().then(function (tasks) {
+            console.log($scope.labels);
+            $scope.listSelect.getCards($scope.labels).then(function (tasks) {
                 $scope.tasks = tasks;
                 $scope.$apply();
                 $("#list-select").material_select();
@@ -63,23 +70,34 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
 
     $scope.startTask = function (task) {
         $scope.state = "started";
-        console.log($scope.task);
         if (!task) {
             $scope.task = TrelloRepo.taskInit($scope.task.name, $scope.task.desc, $scope.listSelect.id);
         } else {
             $scope.task = task;
+            $("#taskLabelSelect").material_select();
         }
+        $("#label-select").material_select();
         $scope.timeTracker = $interval(function () {
             $scope.runTime = TrelloRepo.taskTimer($scope.runTime);
         }, 1000);
-        
     };
+
+    $scope.reset = function() {
+        $interval.cancel($scope.timeTracker);
+        $scope.runTime = [0, 0, 0];
+        $scope.state = '';
+        $scope.task = new Task("","test","","","","");
+    }
     
     $scope.addComment = function () {
         var addedCmt = TrelloRepo.commentManager($scope.runTime, $scope.task.commentFields.desc);
         $scope.task.commentFields.desc = "";
         $scope.task.comments.unshift(addedCmt);
     };
+
+    $scope.deleteTask = function(task) {
+
+    }
 
     $scope.taskAction = function (state, card) {
 
@@ -107,12 +125,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
             $scope.state = '';
             $scope.task = new Task("","test","","","","");
         }
-        //if (state === "set") {
-        //    //$scope.task = card;
-        //    $(".tLabel").addClass("active");
-        //    $scope.task = new Task(card.id, $scope.task.name, $scope.task.desc, "new", $filter("date")(new Date(), "MM/dd/yy hh:mm a"), $scope.listSelect.id);
-        //    $scope.startTask();
-        //}
+
         if(state === "comments") {
             $scope.taskComment = new Card(card.id, card.name, card.desc, card.listId);
             $scope.taskComment.getComments().then( function(data) {
