@@ -43,19 +43,21 @@ strong {
 }
 
 .card-list {
-    height:300px;
+    height:600px;
     overflow-y:scroll;
     padding:1px 3px;
+    margin-top:0;
 }
 
 .c-content {
-    padding:10px;
+    /*padding:10px;*/
 }
 .card .card-action {
     padding:10px;
 }
 .c-title {
-    font-size:18px;
+    font-size:16px;
+    font-weight: bold;
 }
 
 .subheader {
@@ -87,6 +89,52 @@ span.infoBadge {
     box-shadow: 1px 2px 1px rgba(216,216,216,.9);
     padding:5px 10px;
 }
+.hover-card {
+    cursor: pointer;
+    transition: all .2s ease-in;
+}
+.hover-link {
+    cursor:pointer;
+    perspective: 60px;
+}
+.hover-link > a {
+    overflow: hidden;
+    display: block;
+    transform-style: preserve-3d;
+    transition: all .5s ease;
+
+    /*-webkit-transition: all .8s cubic-bezier(0.1, 0.7, 1.0, 0.1);*/
+    /*-moz-transition: all .8s cubic-bezier(0.1, 0.7, 1.0, 0.1);*/
+    /*-ms-transition: all .8s cubic-bezier(0.1, 0.7, 1.0, 0.1);*/
+    /*-o-transition: all .8s cubic-bezier(0.1, 0.7, 1.0, 0.1);*/
+    /*transition: all .8s cubic-bezier(0.1, 0.7, 1.0, 0.1);*/
+
+    -webkit-transform:  rotateY(90deg) translateX(30px);
+    -moz-transform:  rotateY(90deg);
+    -ms-transform:  rotateY(90deg) translateX(30px);
+    -o-transform:  rotateY(90deg) translateX(30px);
+    transform:  rotateY(90deg) translateX(30px);
+
+    color: white;
+}
+.hover-card:hover > .hover-link > a {
+    width:60px;
+    display: block;
+    cursor: pointer;
+    -webkit-transform: translateX(0) rotateY(0deg);
+    -moz-transform:  rotateY(0deg);
+    -ms-transform:  rotateY(0deg);
+    -o-transform:  rotateY(0deg);
+    transform:  translateX(0) rotateY(0deg);
+}
+.hover-card:hover {
+    color:white;
+    background-color:#00838f;
+}
+
+/*.hover-card:hover {*/
+    /*background-color:teal;*/
+/*}*/
 
 .cg-animate.ng-enter, .cg-animate.ng-move {
     transition: all 0.5s linear;
@@ -123,6 +171,7 @@ span.infoBadge {
 
 
 .thin-padding {
+    margin-top: 2px;
     margin-bottom:5px;
 }
 .add-padding {

@@ -21,7 +21,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
     $scope.desc = false;
     //Task variables that need to be tested
 
-    $scope.task = new Task("","test","","","","");
+    $scope.task = new Task("","","","","","");
 
     $scope.runTime = [0, 0, 0]; //hr, min, sec
     $scope.state = "";
