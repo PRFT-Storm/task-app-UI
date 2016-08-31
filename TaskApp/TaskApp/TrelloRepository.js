@@ -7,7 +7,7 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
         this.authenticate = function () {
             Trello.authorize(
             {
-                type: "redirect",
+                type: "launch",
                 name: "Task Tracker App",
                 scope: {
                     read: true,

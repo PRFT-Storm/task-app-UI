@@ -1,4 +1,4 @@
-﻿'use strict';
+﻿﻿'use strict';
 
 angular.module("taskApp").controller("TrelloController", TrelloController);
 
