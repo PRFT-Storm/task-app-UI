@@ -2,7 +2,7 @@
 
 angular.module("taskApp").controller("TrelloController", TrelloController);
 
-function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Board, List, Card, Task) {
+function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $showdown, Task, Timer) {
     //Trello variables
     $scope.boards = [];
     $scope.lists = [];
@@ -21,7 +21,8 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
     $scope.desc = false;
     //Task variables that need to be tested
 
-    $scope.task = new Task("","test","","","","");
+    $scope.task = new Task("","","","","","");
+    $scope.newTask = new Task("","","","","","");
 
     $scope.runTime = [0, 0, 0]; //hr, min, sec
     $scope.state = "";
@@ -33,7 +34,9 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
         TrelloRepo.initialize().then(function (data) {
             $scope.boards = data.$$state.value;
             $scope.$apply();
+
             $("#board-select").material_select();
+
         }); 
     };
 
@@ -52,41 +55,50 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
     };
 
     $scope.listChange = function () {
+        console.log("list change");
         if ($scope.listSelect !== null) {
-            console.log($scope.labels);
             $scope.listSelect.getCards($scope.labels).then(function (tasks) {
-                $scope.tasks = tasks;
-                $scope.$apply();
-                $("#list-select").material_select();
-                $(".cmt-button").sideNav({
-                    menuWidth: 440, // Default is 240
-                    edge: 'right'
+                console.log("pulled list data");
+                $scope.$apply(function () {
+                    $scope.tasks = tasks;
+                    $("#list-select").material_select();
+                    $(".cmt-button").sideNav({
+                        menuWidth: 440, // Default is 240
+                        edge: 'left'
+                    });
                 });
+
             });
         }
     };
 
     //task functions 
 
-    $scope.startTask = function (task) {
-        $scope.state = "started";
+    $scope.selectTask = function (task) {
         if (!task) {
-            $scope.task = TrelloRepo.taskInit($scope.task.name, $scope.task.desc, $scope.listSelect.id);
+            $scope.task = TrelloRepo.newTask($scope.newTask.name, $scope.newTask.desc, $scope.listSelect.id);
         } else {
             $scope.task = task;
-            $("#taskLabelSelect").material_select();
         }
-        $("#label-select").material_select();
-        $scope.timeTracker = $interval(function () {
-            $scope.runTime = TrelloRepo.taskTimer($scope.runTime);
-        }, 1000);
+        $scope.task.newList = $scope.listSelect;
+        $scope.state = "view";
+        $timeout(function() {
+            $("#taskListSelect").material_select();
+            $("#taskLabelSelect").material_select();
+        });
+
+        //$scope.timeTracker = $interval(function () {
+        //    $scope.runTime = TrelloRepo.taskTimer($scope.runTime);
+        //}, 1000);
     };
 
-    $scope.reset = function() {
-        $interval.cancel($scope.timeTracker);
+    $scope.resetTask = function(task) {
+        if($scope.timerTracker) {
+            $interval.cancel($scope.timeTracker);
+        }
         $scope.runTime = [0, 0, 0];
         $scope.state = '';
-        $scope.task = new Task("","test","","","","");
+        $scope.task = task?task:new Task("","","","","","");
     }
     
     $scope.addComment = function () {
@@ -99,7 +111,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
 
     }
 
-    $scope.taskAction = function (state, card) {
+    $scope.taskAction = function (state, task) {
 
         if (state === "break" && $scope.state != "break") {
             $scope.state = state;
@@ -123,20 +135,53 @@ function TrelloController(TrelloRepo, $scope, $interval, $filter, $showdown, Boa
             $interval.cancel($scope.timeTracker);
             $scope.runTime = [0, 0, 0];
             $scope.state = '';
-            $scope.task = new Task("","test","","","","");
+            $scope.task = new Task("","","","","","");
         }
 
-        if(state === "comments") {
-            $scope.taskComment = new Card(card.id, card.name, card.desc, card.listId);
-            $scope.taskComment.getComments().then( function(data) {
-                if(data != "") {
-                    $scope.commentString = $showdown.makeHtml(data);
-                } else {
-                    Materialize.toast('No comments available', 4000)
-                }
-                $scope.$apply();
+    };
+
+    $scope.getComments = function (task) {
+        task.getComments().then( function(data) {
+            if(data != "") {
+                $scope.commentString = $showdown.makeHtml(data);
+            } else {
+                Materialize.toast('No comments available', 4000)
+            }
+            $scope.$apply();
+        });
+    }
+
+    $scope.taskChange = function (task, label) {
+
+        if(task.newLabel) {
+            //we have a new label
+            console.log('two');
+            task.setLabel().then(function(data) {
+                console.log(data);
             });
         }
+        if(label) {
+            console.log('three');
+            $timeout(function() {
+                $scope.task = task.removeLabel(label);
+            });
+
+        }
+        if(task.newList && task.listId) {
+            //we have both
+            console.log('four');
+            if(task.newList.id != task.listId) {
+                console.log('five');
+                //they changed
+                task.changeList().then(function(data) {
+                    console.log(data);
+                    $timeout(function() {
+                        $scope.resetTask();
+                        $scope.listChange();
+                    });
+                });
+            }
+        }
     }
-    
+
 }

@@ -42,20 +42,20 @@ angular.module("taskApp").factory("TrelloRepo", function (Board, Card, List, Tas
          
         // below functions handle new task properties
 
-         this.taskTimer = function (runTime) {
-            runTime[2]++;
-            if (runTime[2] % 60 === 0) {
-                runTime[1]++;
-                runTime[2] = 0;
-                if (runTime[1] % 60 === 0) {
-                    runTime[0]++;
-                    runTime[1] = 0;
-                }
-            }
-            return runTime;
-         };
+         //this.taskTimer = function (runTime) {
+         //   runTime[2]++;
+         //   if (runTime[2] % 60 === 0) {
+         //       runTime[1]++;
+         //       runTime[2] = 0;
+         //       if (runTime[1] % 60 === 0) {
+         //           runTime[0]++;
+         //           runTime[1] = 0;
+         //       }
+         //   }
+         //   return runTime;
+         //};
 
-         this.taskInit = function (title, desc, listId) {
+         this.newTask = function (title, desc, listId) {
              if(!title || listId) {
                  var newTask = new Task(
                      "123",
