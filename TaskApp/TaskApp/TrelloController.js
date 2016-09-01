@@ -17,6 +17,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     $scope.taskSelect = "";
     $scope.taskComment = "";
     $scope.taskLabel = "";
+    $scope.taskChanged = false;
 
     $scope.desc = false;
     //Task variables that need to be tested
@@ -29,6 +30,11 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     $scope.timeTracker;
 
     TrelloRepo.authenticate();
+
+    $(".cmt-button").sideNav({
+        menuWidth: 440, // Default is 240
+        edge: 'left'
+    });
 
     $scope.setBoards = function () {
         TrelloRepo.initialize().then(function (data) {
@@ -54,22 +60,20 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
         }        
     };
 
-    $scope.listChange = function () {
+    $scope.listChange = function (task) {
         console.log("list change");
         if ($scope.listSelect !== null) {
             $scope.listSelect.getCards($scope.labels).then(function (tasks) {
                 console.log("pulled list data");
                 $scope.$apply(function () {
-                    $scope.tasks = tasks;
-                    $("#list-select").material_select();
-                    $(".cmt-button").sideNav({
-                        menuWidth: 440, // Default is 240
-                        edge: 'left'
-                    });
-                });
-
+                    $scope.tasks = tasks;                   
+                    $("#list-select").material_select();                    
+                });                
             });
         }
+        if (task) {
+            
+        };
     };
 
     //task functions 
@@ -81,7 +85,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
             $scope.task = task;
         }
         $scope.task.newList = $scope.listSelect;
-        $scope.state = "view";
+        $scope.task.timer.state = "view";
         $timeout(function() {
             $("#taskListSelect").material_select();
             $("#taskLabelSelect").material_select();
@@ -102,7 +106,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     }
     
     $scope.addComment = function () {
-        var addedCmt = TrelloRepo.commentManager($scope.runTime, $scope.task.commentFields.desc);
+        var addedCmt = TrelloRepo.commentManager($scope.task.timer.runTime, $scope.task.commentFields.desc);
         $scope.task.commentFields.desc = "";
         $scope.task.comments.unshift(addedCmt);
     };
@@ -112,29 +116,27 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     }
 
     $scope.taskAction = function (state, task) {
-
-        if (state === "break" && $scope.state != "break") {
-            $scope.state = state;
-            $interval.cancel($scope.timeTracker);
+        console.log($scope.task.timer);
+        console.log(state);
+        if (state === "break" && $scope.task.timer.state != "break") {
+            $scope.task.timer.state = state;
+            $scope.task.timer.cancelTimer();
             $scope.task.commentFields.startTime = new Date();
         }
-        if (state === "resume" && $scope.state == "break") {
-            $scope.state = state;
+        if (state === "resume" && $scope.task.timer.state == "break") {
+            $scope.task.timer.state = state;
             $scope.task.commentFields.endTime = new Date();
             var breakTimeDesc ="Took a break: "+ $filter("date")($scope.task.commentFields.startTime, "hh:mm a")+ " - "+ $filter("date")($scope.task.commentFields.endTime, "hh:mm a");
+            var addedCmt = TrelloRepo.commentManager($scope.task.timer.runTime, breakTimeDesc)
 
-            var addedCmt = TrelloRepo.commentManager($scope.runTime, breakTimeDesc)
             $scope.task.commentFields.desc = "";
             $scope.task.comments.unshift(addedCmt);
-            $scope.timeTracker = $interval(function () {$scope.runTime = TrelloRepo.taskTimer($scope.runTime);}, 1000);
+            $scope.task.timer.startTask();
         }
         if (state === "done") {
-            $scope.state = state;
-            $scope.task.postComments($scope.runTime);
+            $scope.task.postComments($scope.task.timer.runTime);
             $scope.listChange();
-            $interval.cancel($scope.timeTracker);
-            $scope.runTime = [0, 0, 0];
-            $scope.state = '';
+            $scope.task.timer.cancelTimer();
             $scope.task = new Task("","","","","","");
         }
 
@@ -152,29 +154,38 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     }
 
     $scope.taskChange = function (task, label) {
-
-        if(task.newLabel) {
-            //we have a new label
-            console.log('two');
-            task.setLabel().then(function(data) {
-                console.log(data);
+        console.log(task.newLabel);
+        if(task.newLabel && task.newLabel != "") {
+            task.setLabel().then(function (data) {
+                $timeout(function () {
+                    $scope.resetTask();
+                    $scope.listChange();
+                    $scope.tasks.forEach(function (item) {
+                        if (item.id === task.id) {
+                            $scope.task = item;                            
+                            $scope.$apply();
+                        };
+                    });
+                });
             });
         }
         if(label) {
-            console.log('three');
-            $timeout(function() {
-                $scope.task = task.removeLabel(label);
+            $scope.task = task.removeLabel(label).then(function(data) {
+                $scope.resetTask();
+                $scope.listChange();
+                //$timeout(function () {
+                //    $scope.tasks.forEach(function (item) {
+                //        if (item.id === task.id) {
+                //            $scope.task = item;
+                //            $scope.$apply();
+                //        };
+                //    });
+                //});
             });
-
         }
         if(task.newList && task.listId) {
-            //we have both
-            console.log('four');
             if(task.newList.id != task.listId) {
-                console.log('five');
-                //they changed
                 task.changeList().then(function(data) {
-                    console.log(data);
                     $timeout(function() {
                         $scope.resetTask();
                         $scope.listChange();
@@ -182,6 +193,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
                 });
             }
         }
+        $scope.taskChanged = false;
     }
 
 }

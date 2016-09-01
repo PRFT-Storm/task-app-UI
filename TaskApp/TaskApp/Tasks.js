@@ -14,7 +14,7 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card, Ti
         this.startTime = startTime;
         this.listId = listId;
         this.endTime = null;
-        this.taskTimer = "";
+        this.timer = new Timer(state, [0, 0, 0]);
         this.newList = "";
         this.newLabel = "";
         this.labels = [];
@@ -30,7 +30,6 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card, Ti
             type: "",
             cmtCount : 0
         };
-
     };
 
     Task.prototype.createTask = function () {
@@ -83,11 +82,9 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card, Ti
 
         trelloUrl = "/cards/" + self.id + "/idLabels/" + label;
         console.log(label+" to delete");
-        Trello.delete(trelloUrl).then(function (data) {
-            console.log(label+" deleted!");
+        return Trello.delete(trelloUrl).then(function (data) {
+            return self;
         });
-
-        return self;
     }
 
     Task.prototype.changeList = function () {

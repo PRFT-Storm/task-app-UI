@@ -5,11 +5,11 @@ angular.module("taskApp").factory("Timer", function ($interval) {
      * Constructor, with class name
      */
 
-    function Timer(state, runTime, cardId) {
+    function Timer(state, runTime) {
         // Public properties, assigned to the instance ('this')
         this.state = state;
         this.runTime = runTime;
-        this.cardId = cardId;
+        //this.cardId = cardId;
         this.timeManager = "";
     }
 
@@ -29,12 +29,19 @@ angular.module("taskApp").factory("Timer", function ($interval) {
         return runTime;
     };
 
-    Timer.prototype.startTask = function() {
+    Timer.prototype.startTask = function () {
+        var self = this;
+        self.state = "start";
         self.timeManager = $interval(function () {
-            self.runTime = TrelloRepo.taskTimer(self.runTime);
+            self.runTime = self.taskTimer(self.runTime);
         }, 1000);
 
         return self.runTime;
+    }
+
+    Timer.prototype.cancelTimer = function () {
+        var self = this;
+        $interval.cancel(self.timeManager);
     }
     /**
      * Return the constructor function

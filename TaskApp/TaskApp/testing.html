@@ -86,8 +86,8 @@
                                     <!--<p class="thin-padding"><a href="#/" class="light-blue-text text-darken-3" ng-click="desc=true" ng-hide="desc">Set a Description</a></p>-->
                                 </div>
                                 <div class="card-action teal lighten-5">
-                                    <a href="#/" class="blue-text darken-4-text" ng-class="{'hide' : desc}" ng-click="desc===true?false:true">Description</a> &nbsp; &nbsp;
-                                    <a href=#/" class="teal-text darken-4-text right" ng-click="selectTask()">Create Task</a>
+                                    <!--<a href="#/" class="blue-text darken-4-text" ng-class="{'hide' : desc}" ng-click="desc===true?false:true">Description</a> &nbsp; &nbsp;-->
+                                    <a href="#/" class="teal-text darken-4-text" ng-click="selectTask()">Create Task</a>
                                 </div>
                             </li>
 
@@ -100,16 +100,15 @@
                                                 {{ taskItem.desc  | cut:true:60:' ...' }}
                                             </p>
                                             <!--<p class="thin-padding">-->
-                                                <a href="#/" ng-click="getComments(taskItem)" data-activates="slide-out" data-edge="left" class="cmt-button">
-                                                    <span class=""><i class="tiny material-icons">comment</i>&nbsp;{{taskItem.commentFields.cmtCount}}
-                                                        Comments
+                                                
+                                                    <span class="infoBadge white-text blue-grey darken-3"><i class="tiny material-icons">comment</i>&nbsp;{{taskItem.commentFields.cmtCount}}&nbsp;Comments
                                                     </span>
-                                                </a>
-                                                &nbsp;<span class="infoBadge {{taskItem.labels[0].color}} darken-1 white-text">{{taskItem.labels[0].name}}</span>
+                                                    &nbsp;
+                                                    <span class="infoBadge {{taskItem.labels[0].color}} darken-1 white-text">{{taskItem.labels[0].name}}</span>
 
                                         </div>
                                         <div class="col s2 valign hover-link">
-                                            <a href="#/" class="white-text waves waves-green"><i class="medium material-icons">play_arrow</i></a>
+                                            <a href="#/" class="white-text waves waves-green"><i class="small material-icons">play_arrow</i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -120,8 +119,8 @@
                 </div>
             </div>
             <div class="col s12 m8">
-                <h4 class="grey-text center-align" ng-show="state == '' && listSelect != ''"><em>Create or select a task to work on.</em></h4>
-                <div class="card-box cg-animate" ng-hide="state == '' || state == 'hide'">
+                <h4 class="grey-text center-align" ng-show="task.timer.state == '' && listSelect != ''"><em>Create or select a task to work on.</em></h4>
+                <div class="card-box cg-animate" ng-hide="task.timer.state == '' || state == 'hide'">
                 <!--<div class="card-box">-->
                     <h5>{{task.name}}</h5>
                         <span ng-click="taskChange(task, label.id)" ng-repeat="label in task.labels" class="infoBadge {{label.color}} darken-1 grey-text text-lighten-4">{{label.name}}</span>
@@ -130,7 +129,7 @@
                         <div class="col s12 m4">
                             <!--<div class="task-label-color {{task.labels[0].color}}">&nbsp;</div>-->
                             <div class="input-field">
-                                <select id="taskLabelSelect" ng-model="task.newLabel">
+                                <select id="taskLabelSelect" ng-model="task.newLabel" ng-change="taskChanged=true">
                                     <option
                                             ng-selected="task.labels[0].id == label.id"
                                             ng-repeat="label in labels"
@@ -140,13 +139,11 @@
                                 <label for="taskLabelSelect" ng-show="boardSelect">Set Label</label>
                             </div>
                             <div class="input-field">
-                                <select id="taskListSelect" ng-model="task.newList" ng-options="list.name for list in lists track by list.id">
+                                <select id="taskListSelect" ng-model="task.newList" ng-options="list.name for list in lists track by list.id" ng-change="taskChanged=true">
                                 </select>
                                 <label for="list-select" ng-show="boardSelect">Change List</label>
                             </div>
-                            <p>
-                                <a class="waves-effect waves-light btn" ng-click="taskChange(task)">Save</a>
-                            </p>
+                            
                         </div>
                         <div class="col s12 m8">
                             <p>
@@ -154,20 +151,35 @@
                             </p>
                         </div>
                     </div>
+                    <div class="row">
+                        <p>
+                            <a class="waves-effect waves-light btn" ng-click="taskChange(task)" ng-disabled="!taskChanged">Update</a>
+                            <a href="#/" ng-click="getComments(task)" data-activates="slide-out" data-edge="left" class="cmt-button btn blue-grey darken-3">Comments</a>
+                            <a href="#/" ng-click="task.timer.startTask()" class="btn green darken-3">Start Working</a>
+                        </p>
+                    </div>
                 </div>
-                <div class="card-box cg-animate" ng-hide="state == ''">
+                <div class="card-box cg-animate" ng-hide="task.timer.state === '' || task.timer.state === 'view'">
+                    
                     <div class="row add-padding">
                         <div class="col s12 m4">
-
                             <div class="timer-box">
                                 <p>
                                     <b>Time worked:</b><br>
-                                    <span class="timer-big">{{runTime[0]}}</span><span class="timer-small"> hrs </span><span class="timer-big">{{runTime[1]}}</span><span class="timer-small"> mins </span><span class="timer-big">{{runTime[2]}}</span><span class="timer-small"> secs</span>
+                                    <span class="timer-big">{{task.timer.runTime[0]}}</span><span class="timer-small"> hrs </span>
+                                    <span class="timer-big">{{task.timer.runTime[1]}}</span><span class="timer-small"> mins </span>
+                                    <span class="timer-big">{{task.timer.runTime[2]}}</span><span class="timer-small"> secs</span>
                                 </p>
-                                <p>
-                                    <a class="btn-floating btn-large waves-effect waves-light deep-orange lighten-1" ng-click="taskAction('break')"><i class="material-icons large">pause</i></a>
-                                    <a class="btn-floating btn-large waves-effect waves-light " ng-click="taskAction('resume')"><i class="material-icons large">play_arrow</i></a>
-                                </p>
+                            </div>
+                            <div class="row">
+                                <a class="btn-floating btn-large waves-effect waves-light deep-orange lighten-1" ng-click="taskAction('break')"><i class="material-icons large">pause</i></a>
+                                <a class="btn-floating btn-large waves-effect waves-light " ng-click="taskAction('resume')"><i class="material-icons large">play_arrow</i></a>
+                            </div>
+                            <div class="buttonGroup">
+                                <button type="button" class="btn waves-effect waves-light red lighten-4 red-text text-darken-4" ng-click="resetTask()">X</button>
+                                <button type="button" class="btn waves-effect waves-light light-blue darken-3" ng-click="taskAction('done')" ng-hide="task.timer.state == 'done' || task.timer.state == ''">
+                                    Done <i class="material-icons right">send</i>
+                                </button>
                             </div>
 
                         </div>
@@ -201,13 +213,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="buttonGroup center-align">
-                        <button type="button" class="button waves-effect waves-light red lighten-4 red-text text-darken-4" ng-click="resetTask()">Cancel</button>
-                        <button type="button" class="button waves-effect waves-light light-blue darken-3" ng-click="taskAction('done')" ng-hide="state == 'done' || state == ''">
-                            Finished <i class="material-icons right">send</i>
-                        </button>
-                    </div>
+                    
                 </div>
             </div>
         </div>

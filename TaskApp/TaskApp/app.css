@@ -45,7 +45,8 @@ strong {
 .card-list {
     height:600px;
     overflow-y:scroll;
-    padding:1px 3px;
+    overflow-x:hidden;
+    padding:1px 7px;
     margin-top:0;
 }
 
@@ -99,7 +100,19 @@ span.infoBadge {
     box-shadow: 1px 2px 1px rgba(216,216,216,.9);
     padding:5px 10px;
     margin-bottom:10px;
+    transition: 0.5s linear all;
 }
+
+.card-box.ng-hide-remove {
+  animation:.5s lightSpeedIn ease;
+}
+
+.card-box.ng-hide-add { animation:.5s lightSpeedOut ease; }
+.card-box.ng-hide-add.ng-hide-add-active {  }
+.card-box.ng-hide-remove {  }
+.card-box.ng-hide-remove.ng-hide-remove-active {  }
+
+
 .hover-card {
     cursor: pointer;
     transition: all .2s ease-in;
@@ -129,16 +142,6 @@ span.infoBadge {
     color: white;
 }
 .cmt-button {
-    min-width: 3rem;
-    padding: 2px 8px;
-    text-align: center;
-    font-size: 1rem;
-    line-height: inherit;
-    color: #757575;
-    /* position: absolute; */
-    right: 15px;
-    box-sizing: border-box;
-    background-color:#37474f;
     transition: all .2s ease;
 
 }
@@ -316,3 +319,67 @@ form {
   }
 }
 
+
+
+
+@keyframes flipInX {
+  0% {
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    transition-timing-function: ease-in;
+    opacity: 0;
+  }
+
+  40% {
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    transition-timing-function: ease-in;
+    transition-timing-function: ease-in;
+  }
+
+  60% {
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
+  }
+
+  80% {
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+  }
+
+  100% {
+    transform: perspective(400px);
+    transform: perspective(400px);
+    transform: perspective(400px);
+  }
+}
+
+/* light speed out */
+@keyframes lightSpeedIn {
+  0% {
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+    opacity: 0;
+  }
+
+  100% {
+
+    opacity: 1;
+  }
+}
+
+@keyframes lightSpeedOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+    transform: translate3d(100%, 0, 0) skewX(30deg);
+    opacity: 0;
+  }
+}
