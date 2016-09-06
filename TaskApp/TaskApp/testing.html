@@ -72,6 +72,7 @@
                         <h5 class="add-padding thin-padding teal white-text">Select a task</h5>
 
                         <ul class="lists card-list">
+
                             <li class="card add-padding">
                                 <div class="c-content">
                                     <div class="input-field">
@@ -91,7 +92,7 @@
                                 </div>
                             </li>
 
-                            <li ng-repeat="taskItem in tasks" class="card ">
+                            <li ng-repeat="taskItem in tasks" class="card " ng-class="{'task-active': taskItem.state==='running'}">
                                 <div class="c-content">
                                     <div class="row thin-padding add-padding valign-wrapper hover-card" ng-click="selectTask(taskItem)">
                                         <div class="col s10">
@@ -119,8 +120,8 @@
                 </div>
             </div>
             <div class="col s12 m8">
-                <h4 class="grey-text center-align" ng-show="task.timer.state == '' && listSelect != ''"><em>Create or select a task to work on.</em></h4>
-                <div class="card-box cg-animate" ng-hide="task.timer.state == '' || state == 'hide'">
+                <h4 class="grey-text center-align" ng-show="task.state == '' && listSelect != '' "><em>Create or select a task to work on.</em></h4>
+                <div class="card-box cg-animate" ng-hide="task.state == '' ">
                 <!--<div class="card-box">-->
                     <h5>{{task.name}}</h5>
                         <span ng-click="taskChange(task, label.id)" ng-repeat="label in task.labels" class="infoBadge {{label.color}} darken-1 grey-text text-lighten-4">{{label.name}}</span>
@@ -155,11 +156,11 @@
                         <p>
                             <a class="waves-effect waves-light btn" ng-click="taskChange(task)" ng-disabled="!taskChanged">Update</a>
                             <a href="#/" ng-click="getComments(task)" data-activates="slide-out" data-edge="left" class="cmt-button btn blue-grey darken-3">Comments</a>
-                            <a href="#/" ng-click="task.timer.startTask()" class="btn green darken-3">Start Working</a>
+                            <a href="#/" ng-click="task.runTask()" class="btn green darken-3">Start Working</a>
                         </p>
                     </div>
                 </div>
-                <div class="card-box cg-animate" ng-hide="task.timer.state === '' || task.timer.state === 'view'">
+                <div class="card-box cg-animate" ng-hide="task.timer.state === '' ">
                     
                     <div class="row add-padding">
                         <div class="col s12 m4">
@@ -175,9 +176,15 @@
                                 <a class="btn-floating btn-large waves-effect waves-light deep-orange lighten-1" ng-click="taskAction('break')"><i class="material-icons large">pause</i></a>
                                 <a class="btn-floating btn-large waves-effect waves-light " ng-click="taskAction('resume')"><i class="material-icons large">play_arrow</i></a>
                             </div>
+                            <div class="row">
+                                <a ng-click="lessTime()" class="btn-floating btn-small waves-effect red darken-3"><i class="material-icons small">remove</i></a>
+                                <a ng-click="moreTime()" class="btn-floating btn-small waves-effect green darken-2"><i class="material-icons small">add</i></a>
+
+                                <span class="infoBadge grey darken-3 white-text">Minutes</span>
+                            </div>
                             <div class="buttonGroup">
-                                <button type="button" class="btn waves-effect waves-light red lighten-4 red-text text-darken-4" ng-click="resetTask()">X</button>
-                                <button type="button" class="btn waves-effect waves-light light-blue darken-3" ng-click="taskAction('done')" ng-hide="task.timer.state == 'done' || task.timer.state == ''">
+                                <button type="button" class="btn waves-effect waves-light red lighten-4 red-text text-darken-4" ng-click="resetTask()"><i class="material-icons small">cancel</i></button>
+                                <button type="button" class="btn waves-effect waves-light light-blue darken-3" ng-click="taskAction('done')">
                                     Done <i class="material-icons right">send</i>
                                 </button>
                             </div>

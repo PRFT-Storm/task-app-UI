@@ -22,7 +22,7 @@ angular.module("taskApp").factory("List", function (Card, Task) {
         var trelloListUrl = "/lists/" + self.id + "/cards";
         return Trello.get(trelloListUrl).then(function (response) {
             response.forEach(function (card) {
-                var newCard = new Task(card.id, card.name, card.desc, "existing", "", card.idList);
+                var newCard = new Task(card.id, card.name, card.desc, "", "", card.idList);
                 newCard.commentFields.cmtCount = card.badges.comments;
                 newCard.labels = card.labels;
                 newCard.boardLabels = boardLabels;

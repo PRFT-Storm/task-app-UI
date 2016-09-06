@@ -14,7 +14,7 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card, Ti
         this.startTime = startTime;
         this.listId = listId;
         this.endTime = null;
-        this.timer = new Timer(state, [0, 0, 0]);
+        this.timer = new Timer("", [0, 0, 0]);
         this.newList = "";
         this.newLabel = "";
         this.labels = [];
@@ -44,7 +44,6 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card, Ti
         };
         return Trello.post("/cards/", newCard).then(function (data) {
             var cardId = data.id;
-            console.log("task created!: "+cardId);
             self.id = cardId;
             return cardId;
         });
@@ -135,6 +134,11 @@ angular.module("taskApp").factory("Task", function ($interval, $filter, Card, Ti
         });
     }
 
+    Task.prototype.runTask = function() {
+        var self = this;
+        self.state = "running";
+        self.timer.startTask();
+    }
     /**
      * Return the constructor function
      */

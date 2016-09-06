@@ -26,7 +26,6 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     $scope.newTask = new Task("","","","","","");
 
     $scope.runTime = [0, 0, 0]; //hr, min, sec
-    $scope.state = "";
     $scope.timeTracker;
 
     TrelloRepo.authenticate();
@@ -84,25 +83,25 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
         } else {
             $scope.task = task;
         }
+
+        console.log($scope.task);
         $scope.task.newList = $scope.listSelect;
-        $scope.task.timer.state = "view";
+        if($scope.task.state === "") {
+            //no timer started on this task
+            $scope.task.state = "view";
+        }
         $timeout(function() {
             $("#taskListSelect").material_select();
             $("#taskLabelSelect").material_select();
         });
-
-        //$scope.timeTracker = $interval(function () {
-        //    $scope.runTime = TrelloRepo.taskTimer($scope.runTime);
-        //}, 1000);
     };
 
     $scope.resetTask = function(task) {
-        if($scope.timerTracker) {
-            $interval.cancel($scope.timeTracker);
-        }
-        $scope.runTime = [0, 0, 0];
-        $scope.state = '';
-        $scope.task = task?task:new Task("","","","","","");
+
+        $scope.task.timer.cancelTimer();
+        $scope.task.state = '';
+        $scope.task.timer = new Timer("", [0, 0, 0]);
+        $scope.task = new Task("","","","","","");
     }
     
     $scope.addComment = function () {
@@ -116,8 +115,6 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
     }
 
     $scope.taskAction = function (state, task) {
-        console.log($scope.task.timer);
-        console.log(state);
         if (state === "break" && $scope.task.timer.state != "break") {
             $scope.task.timer.state = state;
             $scope.task.timer.cancelTimer();
@@ -135,7 +132,7 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
         }
         if (state === "done") {
             $scope.task.postComments($scope.task.timer.runTime);
-            $scope.listChange();
+            //$scope.listChange();
             $scope.task.timer.cancelTimer();
             $scope.task = new Task("","","","","","");
         }
@@ -196,4 +193,11 @@ function TrelloController(TrelloRepo, $scope, $interval, $timeout, $filter, $sho
         $scope.taskChanged = false;
     }
 
+    $scope.moreTime = function() {
+        $scope.task.timer.changeTime(15);
+    }
+
+    $scope.lessTime = function() {
+        $scope.task.timer.changeTime(-15);
+    }
 }
