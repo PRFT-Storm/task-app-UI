@@ -65,47 +65,6 @@
 
         <div class="row">
             <h4 class="grey-text center-align" ng-show="listSelect == ''"><em>Select a board and list to work on.</em></h4>
-            <div class="col s12">
-                <ul class="lists cardList">
-
-                            <!-- <li class="card add-padding">
-                                <div class="c-content">
-                                    <div class="input-field">
-                                        <input id="task_title" type="text" ng-model="newTask.name" />
-                                        <label for="task_title" class="tLabel">New Task</label>
-                                    </div>
-
-                                    <div class="input-field" ng-show="desc">
-                                        <textarea id="task_desc" class="materialize-textarea" ng-model="newTask.desc"></textarea>
-                                        <label for="task_desc" class="tLabel">Task Description</label>
-                                    </div>
-                                    <!-- <p class="thin-padding"><a href="#/" class="light-blue-text text-darken-3" ng-click="desc=true" ng-hide="desc">Set a Description</a></p>-->
-                                <!-- </div> -->
-                               <!--  <div class="card-action teal lighten-5">
-                                    <a href="#/" class="blue-text darken-4-text" ng-class="{'hide' : desc}" ng-click="desc===true?false:true">Description</a> &nbsp; &nbsp;
-                                    <a href="#/" class="teal-text darken-4-text" ng-click="selectTask()">Create Task</a>
-                                </div>
-                            </li> -->
-                            <li ng-repeat="taskItem in tasks" class="cardItem" ng-class="{'task-active': taskItem.state==='running'}">
-                                   <div class="cardContent">
-                                        <p class="cardTitle">{{ taskItem.name | cut:true:40:' ...' }}
-                                        </p>
-                                        <div class="cardDetails">
-                                            <span class="infoBadge white-text blue-grey darken-3">
-                                                <i class="tiny material-icons">comment</i>&nbsp;
-                                                {{taskItem.commentFields.cmtCount}}&nbsp;Comments
-                                            </span>
-                                            &nbsp;
-                                            <span class="infoBadge {{taskItem.labels[0].color}} darken-1 white-text">{{taskItem.labels[0].name}}</span>
-                                            <p>{{ taskItem.desc  | cut:true:100:' ...' }}</p>
-                                        </div>
-                                   </div> 
-                            </li>
-                            
-                        </ul>
-
-            </div>
-
             <div class="col s12 m4">
 
                 <div class="row">
